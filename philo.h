@@ -6,12 +6,15 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:17:01 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/16 11:28:46 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/20 19:10:32 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <pthread.h>
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
 #define TIMES_TO_COUNT 21000
 
@@ -31,12 +34,14 @@ typedef struct s_philo
 
 typedef struct  s_global
 {
-    //pthread_t       **th;
     t_philo         **philo;
     unsigned int    nb_of_philo;
     unsigned int    time_to_die;
     unsigned int    time_to_eat;
     unsigned int    time_to_sleep;
-    unsigned int    nb_eat;
+    int    nb_eat;
 }   t_global;
 
+
+/*HELPER*/
+int	ft_atoi(const char *nptr);

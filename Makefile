@@ -6,7 +6,7 @@ NAME    = philo
 ##SRC_DIR = src
 ##INCLUDE_DIRS = 
 
-SOURCES = philo.c
+SOURCES = philo.c src/ft_atoi.c
 
 OBJETS  = $(SOURCES:.c=.o)
 
