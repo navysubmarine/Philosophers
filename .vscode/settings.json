@@ -1,0 +1,28 @@
+{
+  "C_Cpp.default.cppIntellisenseEngine": "disabled",
+  "C_Cpp.intelliSenseEngine": "tag-parser",
+  "C_Cpp.intelliSenseEngineFallback": "disabled",
+  "[c]": {
+    "editor.defaultFormatter": "keyhr.42-c-format",
+    "editor.formatOnSave": true,
+    "editor.autoCompletion": "on"
+  },
+  "files.associations": {
+    "*.c": "c",
+    "*.h": "c"
+  },
+  "github.copilot.enable": {
+    "*": false,
+    "plaintext": false,
+    "markdown": false,
+    "scminput": false
+  },
+  "editor.quickSuggestions": {
+    "other": false,
+    "comments": false,
+    "strings": false
+  },
+  "terminal.integrated.env.linux": {
+    "PATH": "/home/marthoma/.local/bin:${env:PATH}"
+  }
+}

@@ -4,7 +4,6 @@
 
 # ⋆˚✰ ݁˖⭑. Description *⋆˚✰ ݁˖⭑.
 
-so_long is a small 2D game project developed in C language. The goal is to create a simple tile-based game using the MiniLibX graphical library. 
 
 
 # *⋆˚✰ ݁˖⭑. Instructions *⋆˚✰ ݁˖⭑.
@@ -23,15 +22,8 @@ And then run it with a .ber map, I have provided some in my maps/ folder, you ca
 
 # *⋆˚✰ ݁˖⭑. Resources  *⋆˚✰ ݁˖⭑.
 
-
-
-
-Gitbook : [explaining how so_long works](https://42-cursus.gitbook.io/guide/2-rank-02/so_long/understand-so_long).
+Codequoi.com : [Threads, mutex et programmation concurrente](https://www.codequoi.com/threads-mutex-et-programmation-concurrente-en-c/).
 
 README from rapohlen's FdF : [MLX for dummies](https://github.com/m0d1nst4ll3r/43_FdF).
 
-[Minilibx tutorial](https://harm-smits.github.io/42docs/libs/minilibx).
-
-Youtube video : [Minilibx tutorial from Oceano](https://www.youtube.com/watch?v=bYS93r6U0zg).
-
-I also used AI (chatgpt) to help me create a checklist of everything I had to do in order to complete this project, to explain to me how the xpm format works, and to debug/make sure the program was leak-free.
+# *⋆˚✰ ݁˖⭑. AI Use  *⋆˚✰ ݁˖⭑.
