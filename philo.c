@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:19:29 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/21 15:43:13 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/21 16:23:02 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,22 @@
 
 void	*routine(void *data)
 {
-	t_philo	*philo;
+	t_philo			*philo;
+	struct timeval	start;
+	int				i;
 
+	i = 0;
 	philo = (t_philo *)data;
-	while (1)
+	if (gettimeofday(&start, NULL))
+		return (NULL);
+	while (i < 10)
 	{
-		
+		pthread_mutex_lock(philo->g->mutex);
+		//printf("start= %d\n", (int)start->tv_sec);
 		/*eat, sleep and think
 		first try to access the variable
 		if it has been locked, wait until it's unlocked
-		escape the loop when the time_to_die is smaller than 
+		escape the loop when the time_to_die is smaller than
 		the time since the last time you ate
 		lock it
 		eat = print "is_eating"
@@ -36,7 +42,8 @@ void	*routine(void *data)
 		then repeat
 		*/
 		printf("Bonjour je suis le thread numero %d\n", philo->id);
-		usleep(3000000);
+		pthread_mutex_unlock(philo->g->mutex);
+		i++;
 	}
 	return (NULL);
 }
@@ -58,22 +65,12 @@ static int	init_struct(t_global *g, int argc, char **argv)
 	return (0);
 }
 
-static int	init(t_global *g, int argc, char **argv)
+static int	init_threads(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 {
-	if (init_struct(&g, argc, argv))
-		return (1);
-	if (init_philo(g, g->philo, g->nb_of_philo))
-		return (1);
-	if (init_threads(g, g->philo, g->nb_of_philo))
-		return (1);
-	return (0);
-}
-
-static int init_threads(t_global *g, t_philo **philo, unsigned int nb_of_philo)
-{
-	int i;
+	unsigned int	i;
 
 	i = 0;
+	pthread_mutex_init(g->mutex, NULL);
 	while (i < nb_of_philo)
 	{
 		if (pthread_create(&(philo[i]->th), NULL, &routine, philo[i]) != 0)
@@ -95,6 +92,9 @@ static int init_threads(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 		printf("Thread %d has finished execution\n", i);
 		i++;
 	}
+	pthread_mutex_destroy(g->mutex);
+	free_philos(philo, nb_of_philo);
+	/*free global struct*/
 	return (0);
 }
 
@@ -102,14 +102,13 @@ static int	init_philo(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 {
 	unsigned int	i;
 
-	(void)g;
 	i = 0;
 	while (i < nb_of_philo)
 	{
 		philo[i] = malloc(sizeof(t_philo));
 		if (!philo[i])
 		{
-			//free_philos(philo, i);
+			// free_philos(philo, i);
 			printf("Error: allocation failed\n");
 			return (1);
 		}
@@ -118,8 +117,20 @@ static int	init_philo(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 		philo[i]->time_to_eat = g->time_to_eat;
 		philo[i]->time_to_sleep = g->time_to_sleep;
 		philo[i]->id = i;
+		philo[i]->g = g;
 		i++;
 	}
+	return (0);
+}
+
+static int	init(t_global *g, int argc, char **argv)
+{
+	if (init_struct(g, argc, argv))
+		return (1);
+	if (init_philo(g, g->philo, g->nb_of_philo))
+		return (1);
+	if (init_threads(g, g->philo, g->nb_of_philo))
+		return (1);
 	return (0);
 }
 
@@ -131,7 +142,7 @@ int	main(int argc, char **argv)
 		return (1);
 	if (init(&g, argc, argv))
 		return (1);
-	//if (init_threads())
+	// if (init_threads())
 	/*init threads
 	join them
 	lock

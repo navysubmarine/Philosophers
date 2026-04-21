@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:17:01 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/21 15:34:07 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/21 16:22:06 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/time.h>
 #include <unistd.h>
 
 #define TIMES_TO_COUNT 21000
@@ -29,10 +30,11 @@ typedef struct s_philo
 {
 	pthread_t		th;
 	unsigned int	id;
-    unsigned int    last_time_you_ate;
+	unsigned int	last_time_you_ate;
 	unsigned int	time_to_die;
 	unsigned int	time_to_eat;
 	unsigned int	time_to_sleep;
+	struct s_global	*g;
 	// bool			is_eating;
 	// bool			is_thinking;
 	// bool			is_dead;
@@ -46,6 +48,7 @@ typedef struct s_global
 	unsigned int	time_to_eat;
 	unsigned int	time_to_sleep;
 	int				nb_eat;
+	pthread_mutex_t	*mutex;
 }					t_global;
 
 /*HELPER*/
