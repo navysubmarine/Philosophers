@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:19:29 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/22 16:19:39 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/22 16:29:09 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,13 @@ void	*routine(void *data)
 		pthread_mutex_unlock(philo->g->ok_init_mutex);
 		pthread_mutex_lock(philo->right_fork);
 		pthread_mutex_lock(philo->left_fork);
-		printf("ID: %d - I am eating\n", philo->id);
+		printf("%sID: %d - I am eating%s\n", YELLOW, philo->id, NC);
 		usleep(philo->time_to_eat * 1000);
 		pthread_mutex_unlock(philo->right_fork);
 		pthread_mutex_unlock(philo->left_fork);
-		printf("ID: %d - I am sleeping\n", philo->id);
+		printf("%sID: %d - I am sleeping%s\n", RED, philo->id, NC);
 		usleep(philo->time_to_sleep * 1000);
-		printf("ID: %d - I am thinking\n", philo->id);
+		printf("%sID: %d - I am thinking%s\n", GREEN, philo->id, NC);
 		/*eat, sleep and think
 		first try to access the variable
 		if it has been locked, wait until it's unlocked
@@ -93,7 +93,7 @@ int	init_threads(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 			printf("Error: thread creation failed\n");
 			return (1);
 		}
-		printf("Thread %d a ete cree\n", i);
+		printf("Thread %d a ete cree\n", i+1);
 		i++;
 	}
 	pthread_mutex_unlock(g->ok_init_mutex);
@@ -130,7 +130,7 @@ int	init_philo(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 		philo[i]->time_to_die = g->time_to_die;
 		philo[i]->time_to_eat = g->time_to_eat;
 		philo[i]->time_to_sleep = g->time_to_sleep;
-		philo[i]->id = i;
+		philo[i]->id = i + 1;
 		philo[i]->g = g;
 		philo[i]->right_fork = g->fork_mutex[i];
 		if (i == 0)
@@ -167,16 +167,12 @@ static int	init(t_global *g, int argc, char **argv)
 {
 	if (init_struct(g, argc, argv))
 		return (1);
-	write(1, "OK init struct\n", 14);
 	if (init_mutex(g, g->fork_mutex, g->nb_of_philo))
 		return (1);
-	write(1, "OK init mutex\n", 14);
 	if (init_philo(g, g->philo, g->nb_of_philo))
 		return (1);
-	write(1, "OK init philo\n", 14);
 	if (init_threads(g, g->philo, g->nb_of_philo))
 		return (1);
-	write(1, "OK init threads\n", 14);
 	return (0);
 }
 
