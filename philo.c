@@ -6,28 +6,50 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:19:29 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/22 16:29:09 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/22 17:32:53 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+long	getcurrenttime(void)
+{
+	struct timeval	time;
+	long			value;
+
+	if (gettimeofday(&time, NULL))
+		return (0);
+	else
+	{
+		value = (long)time.tv_sec * 1000 + (long)time.tv_usec / 1000;
+		return (value);
+	}
+}
+
 void	*routine(void *data)
 {
-	t_philo			*philo;
-	//struct timeval	start;
-	int				i;
+	t_philo	*philo;
+	int		i;
 
 	i = 0;
 	philo = (t_philo *)data;
-	// if (gettimeofday(&start, NULL))
-	// 	return (NULL);
+	pthread_mutex_lock(philo->g->ok_init_mutex);
+	pthread_mutex_unlock(philo->g->ok_init_mutex);
 	while (1)
 	{
-		pthread_mutex_lock(philo->g->ok_init_mutex);
-		pthread_mutex_unlock(philo->g->ok_init_mutex);
+		philo->end = getcurrenttime();
+		if (!philo->end)
+			return (NULL);
+		if ((philo->end - philo->start) > philo->time_to_die)
+		{
+			printf("%sID: %d - I am dead %s\n", PURPLE, philo->id, NC);
+			return (NULL);
+		}
 		pthread_mutex_lock(philo->right_fork);
 		pthread_mutex_lock(philo->left_fork);
+		philo->start = getcurrenttime();
+		if (!philo->start)
+			return (NULL);
 		printf("%sID: %d - I am eating%s\n", YELLOW, philo->id, NC);
 		usleep(philo->time_to_eat * 1000);
 		pthread_mutex_unlock(philo->right_fork);
@@ -35,22 +57,8 @@ void	*routine(void *data)
 		printf("%sID: %d - I am sleeping%s\n", RED, philo->id, NC);
 		usleep(philo->time_to_sleep * 1000);
 		printf("%sID: %d - I am thinking%s\n", GREEN, philo->id, NC);
-		/*eat, sleep and think
-		first try to access the variable
-		if it has been locked, wait until it's unlocked
-		escape the loop when the time_to_die is smaller than
-		the time since the last time you ate
-		lock it
-		eat = print "is_eating"
-		start counting and
-		escape when time_to_eat is over
-		unlock it
-		start counting last_time_you_ate
-		sleep for the time_to_sleep amount
-		then think for the time_to_think amount
-		then repeat
-		*/
-		//printf("Bonjour je suis le thread numero %d\n", philo->id);
+		//printf("%sID: %d - last time I ate : %lu%s\n", BLUE, philo->id,
+		//	philo->start, NC);
 		i++;
 	}
 	return (NULL);
@@ -93,7 +101,7 @@ int	init_threads(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 			printf("Error: thread creation failed\n");
 			return (1);
 		}
-		printf("Thread %d a ete cree\n", i+1);
+		printf("Thread %d a ete cree\n", i + 1);
 		i++;
 	}
 	pthread_mutex_unlock(g->ok_init_mutex);
@@ -106,7 +114,7 @@ int	init_threads(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 			printf("Error: thread haven't been joined\n");
 			return (1);
 		}
-		printf("Thread %d has finished execution\n", i);
+		printf("Thread %d has finished execution\n", i + 1);
 		i++;
 	}
 	return (0);

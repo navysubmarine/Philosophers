@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/22 14:31:58 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/22 15:48:54 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/22 16:48:43 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	print_philo(t_philo *philo)
 {
 	printf("  [Philo %u]\n", philo->id);
 	printf("    id              : %u\n", philo->id);
-	printf("    last_time_ate   : %u\n", philo->last_time_you_ate);
+	printf("    last_time_ate   : %ld\n", philo->start);
 	printf("    time_to_die     : %u\n", philo->time_to_die);
 	printf("    time_to_eat     : %u\n", philo->time_to_eat);
 	printf("    time_to_sleep   : %u\n", philo->time_to_sleep);

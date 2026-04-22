@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:17:01 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/22 15:53:15 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/22 17:22:32 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,16 @@
 #define BYELLOW "\e[1;33m"
 #define RED "\e[31m"
 #define GREEN "\e[32m"
+#define BLUE "\e[34m"
+#define PURPLE "\e[35m"
 
 typedef struct s_philo
 {
 	pthread_t		th;
 	unsigned int	id;
 
-	unsigned int	last_time_you_ate;
+	long			start;
+	long			end;
 	unsigned int	time_to_die;
 	unsigned int	time_to_eat;
 	unsigned int	time_to_sleep;
