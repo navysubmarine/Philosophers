@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:17:01 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/22 15:33:57 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/22 15:53:15 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,15 @@ typedef struct s_philo
 
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
+
 	struct s_global	*g;
 }					t_philo;
 
 typedef struct s_global
 {
 	t_philo			**philo;
-	pthread_mutex_t	**mutex;
+	pthread_mutex_t	**fork_mutex;
+	pthread_mutex_t	*ok_init_mutex;
 	unsigned int	nb_of_philo;
 	unsigned int	time_to_die;
 	unsigned int	time_to_eat;

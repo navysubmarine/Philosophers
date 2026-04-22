@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/21 15:06:06 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/22 15:32:57 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/22 15:48:54 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,19 +34,19 @@ void    free_global(t_global *g)
 
     if (!g)
         return ;
-    if (g->mutex)
+    if (g->fork_mutex)
     {
         i = 0;
         while (i < g->nb_of_philo)
         {
-            if (g->mutex[i])
+            if (g->fork_mutex[i])
             {
-                pthread_mutex_destroy(g->mutex[i]);
-                free(g->mutex[i]);
+                pthread_mutex_destroy(g->fork_mutex[i]);
+                free(g->fork_mutex[i]);
             }
             i++;
         }
-        free(g->mutex);
+        free(g->fork_mutex);
     }
     if (g->philo)
         free_philos(g->philo, g->nb_of_philo);

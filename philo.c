@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:19:29 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/22 15:35:03 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/22 16:19:39 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,14 @@ void	*routine(void *data)
 	// 	return (NULL);
 	while (1)
 	{
-		//pthread_mutex_lock(philo->g->mutex);
-		//printf("start= %d\n", (int)start->tv_sec);
+		pthread_mutex_lock(philo->g->ok_init_mutex);
+		pthread_mutex_unlock(philo->g->ok_init_mutex);
+		pthread_mutex_lock(philo->right_fork);
+		pthread_mutex_lock(philo->left_fork);
 		printf("ID: %d - I am eating\n", philo->id);
 		usleep(philo->time_to_eat * 1000);
-		//pthread_mutex_unlock(philo->g->mutex);
+		pthread_mutex_unlock(philo->right_fork);
+		pthread_mutex_unlock(philo->left_fork);
 		printf("ID: %d - I am sleeping\n", philo->id);
 		usleep(philo->time_to_sleep * 1000);
 		printf("ID: %d - I am thinking\n", philo->id);
@@ -53,7 +56,7 @@ void	*routine(void *data)
 	return (NULL);
 }
 
-static int	init_struct(t_global *g, int argc, char **argv)
+int	init_struct(t_global *g, int argc, char **argv)
 {
 	memset(g, 0, sizeof(t_global));
 	g->nb_of_philo = ft_atoi(argv[1]);
@@ -67,17 +70,21 @@ static int	init_struct(t_global *g, int argc, char **argv)
 	g->philo = malloc(sizeof(t_philo *) * g->nb_of_philo);
 	if (!g->philo)
 		return (1);
-	g->mutex = malloc(sizeof(pthread_mutex_t *) * g->nb_of_philo);
-	if (!g->mutex)
+	g->fork_mutex = malloc(sizeof(pthread_mutex_t *) * g->nb_of_philo);
+	if (!g->fork_mutex)
 		return (free(g->philo), 1);
+	g->ok_init_mutex = malloc(sizeof(pthread_mutex_t));
+	if (!g->ok_init_mutex)
+		return (free(g->philo), free(g->fork_mutex), 1);
 	return (0);
 }
 
-static int	init_threads(t_global *g, t_philo **philo, unsigned int nb_of_philo)
+int	init_threads(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 {
 	unsigned int	i;
 
 	i = 0;
+	pthread_mutex_lock(g->ok_init_mutex);
 	while (i < nb_of_philo)
 	{
 		if (pthread_create(&(philo[i]->th), NULL, &routine, philo[i]) != 0)
@@ -89,6 +96,7 @@ static int	init_threads(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 		printf("Thread %d a ete cree\n", i);
 		i++;
 	}
+	pthread_mutex_unlock(g->ok_init_mutex);
 	i = 0;
 	while (i < nb_of_philo)
 	{
@@ -104,7 +112,7 @@ static int	init_threads(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 	return (0);
 }
 
-static int	init_philo(t_global *g, t_philo **philo, unsigned int nb_of_philo)
+int	init_philo(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 {
 	unsigned int	i;
 
@@ -124,17 +132,17 @@ static int	init_philo(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 		philo[i]->time_to_sleep = g->time_to_sleep;
 		philo[i]->id = i;
 		philo[i]->g = g;
-		philo[i]->right_fork = g->mutex[i];
+		philo[i]->right_fork = g->fork_mutex[i];
 		if (i == 0)
-			philo[i]->left_fork = g->mutex[nb_of_philo - 1];
+			philo[i]->left_fork = g->fork_mutex[nb_of_philo - 1];
 		else
-			philo[i]->left_fork = g->mutex[i - 1];
+			philo[i]->left_fork = g->fork_mutex[i - 1];
 		i++;
 	}
 	return (0);
 }
 
-static int	init_mutex(t_global *g, pthread_mutex_t **mutex, unsigned int nb_of_philo)
+int	init_mutex(t_global *g, pthread_mutex_t **mutex, unsigned int nb_of_philo)
 {
 	unsigned int	i;
 
@@ -151,6 +159,7 @@ static int	init_mutex(t_global *g, pthread_mutex_t **mutex, unsigned int nb_of_p
 		pthread_mutex_init(mutex[i], NULL);
 		i++;
 	}
+	pthread_mutex_init(g->ok_init_mutex, NULL);
 	return (0);
 }
 
@@ -158,12 +167,16 @@ static int	init(t_global *g, int argc, char **argv)
 {
 	if (init_struct(g, argc, argv))
 		return (1);
-	if (init_mutex(g, g->mutex, g->nb_of_philo))
+	write(1, "OK init struct\n", 14);
+	if (init_mutex(g, g->fork_mutex, g->nb_of_philo))
 		return (1);
+	write(1, "OK init mutex\n", 14);
 	if (init_philo(g, g->philo, g->nb_of_philo))
 		return (1);
+	write(1, "OK init philo\n", 14);
 	if (init_threads(g, g->philo, g->nb_of_philo))
 		return (1);
+	write(1, "OK init threads\n", 14);
 	return (0);
 }
 

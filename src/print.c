@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/22 14:31:58 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/22 14:32:11 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/22 15:48:54 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	print_philo(t_philo *philo)
 
 void	print_global(t_global *g)
 {
-	unsigned int	i;
+	unsigned int i;
 
 	printf("=== t_global ===\n");
 	printf("  nb_of_philo  : %u\n", g->nb_of_philo);
@@ -33,7 +33,7 @@ void	print_global(t_global *g)
 	printf("  time_to_eat  : %u\n", g->time_to_eat);
 	printf("  time_to_sleep: %u\n", g->time_to_sleep);
 	printf("  nb_eat       : %d\n", g->nb_eat);
-	printf("  mutex ptr    : %p\n", (void *)g->mutex);
+	printf("  mutex ptr    : %p\n", (void *)g->fork_mutex);
 	printf("  philo ptr    : %p\n", (void *)g->philo);
 	printf("\n=== Philosophers ===\n");
 	i = 0;
