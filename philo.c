@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:19:29 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/21 16:23:02 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/22 14:48:28 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,13 @@
 void	*routine(void *data)
 {
 	t_philo			*philo;
-	struct timeval	start;
+	//struct timeval	start;
 	int				i;
 
 	i = 0;
 	philo = (t_philo *)data;
-	if (gettimeofday(&start, NULL))
-		return (NULL);
+	// if (gettimeofday(&start, NULL))
+	// 	return (NULL);
 	while (i < 10)
 	{
 		pthread_mutex_lock(philo->g->mutex);
@@ -62,6 +62,7 @@ static int	init_struct(t_global *g, int argc, char **argv)
 	g->philo = malloc(sizeof(t_philo *) * g->nb_of_philo);
 	if (!g->philo)
 		return (1);
+	g->mutex = malloc(sizeof(pthread_mutex_t *));
 	return (0);
 }
 
@@ -69,6 +70,7 @@ static int	init_threads(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 {
 	unsigned int	i;
 
+	(void)g;
 	i = 0;
 	pthread_mutex_init(g->mutex, NULL);
 	while (i < nb_of_philo)
@@ -93,7 +95,7 @@ static int	init_threads(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 		i++;
 	}
 	pthread_mutex_destroy(g->mutex);
-	free_philos(philo, nb_of_philo);
+	//free_philos(philo, nb_of_philo);
 	/*free global struct*/
 	return (0);
 }
@@ -127,8 +129,10 @@ static int	init(t_global *g, int argc, char **argv)
 {
 	if (init_struct(g, argc, argv))
 		return (1);
+	//print_global(g);
 	if (init_philo(g, g->philo, g->nb_of_philo))
 		return (1);
+	//print_global(g);
 	if (init_threads(g, g->philo, g->nb_of_philo))
 		return (1);
 	return (0);
@@ -142,12 +146,4 @@ int	main(int argc, char **argv)
 		return (1);
 	if (init(&g, argc, argv))
 		return (1);
-	// if (init_threads())
-	/*init threads
-	join them
-	lock
-	access corresponding variables
-	sleep for the time_to_eat time
-	unlock the mutex
-	*/
 }

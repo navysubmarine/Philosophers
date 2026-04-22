@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:17:01 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/21 16:22:06 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/22 14:32:55 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,3 +58,6 @@ int					is_valid_number(char *arg);
 int					check_arg(int argc, char **argv);
 /*FREE*/
 void				free_philos(t_philo **philo, unsigned int nb);
+/*PRINT*/
+void				print_philo(t_philo *philo);
+void				print_global(t_global *g);
