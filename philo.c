@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:19:29 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/22 14:48:28 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/22 15:35:03 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,16 @@ void	*routine(void *data)
 	philo = (t_philo *)data;
 	// if (gettimeofday(&start, NULL))
 	// 	return (NULL);
-	while (i < 10)
+	while (1)
 	{
-		pthread_mutex_lock(philo->g->mutex);
+		//pthread_mutex_lock(philo->g->mutex);
 		//printf("start= %d\n", (int)start->tv_sec);
+		printf("ID: %d - I am eating\n", philo->id);
+		usleep(philo->time_to_eat * 1000);
+		//pthread_mutex_unlock(philo->g->mutex);
+		printf("ID: %d - I am sleeping\n", philo->id);
+		usleep(philo->time_to_sleep * 1000);
+		printf("ID: %d - I am thinking\n", philo->id);
 		/*eat, sleep and think
 		first try to access the variable
 		if it has been locked, wait until it's unlocked
@@ -41,8 +47,7 @@ void	*routine(void *data)
 		then think for the time_to_think amount
 		then repeat
 		*/
-		printf("Bonjour je suis le thread numero %d\n", philo->id);
-		pthread_mutex_unlock(philo->g->mutex);
+		//printf("Bonjour je suis le thread numero %d\n", philo->id);
 		i++;
 	}
 	return (NULL);
@@ -62,7 +67,9 @@ static int	init_struct(t_global *g, int argc, char **argv)
 	g->philo = malloc(sizeof(t_philo *) * g->nb_of_philo);
 	if (!g->philo)
 		return (1);
-	g->mutex = malloc(sizeof(pthread_mutex_t *));
+	g->mutex = malloc(sizeof(pthread_mutex_t *) * g->nb_of_philo);
+	if (!g->mutex)
+		return (free(g->philo), 1);
 	return (0);
 }
 
@@ -70,13 +77,12 @@ static int	init_threads(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 {
 	unsigned int	i;
 
-	(void)g;
 	i = 0;
-	pthread_mutex_init(g->mutex, NULL);
 	while (i < nb_of_philo)
 	{
 		if (pthread_create(&(philo[i]->th), NULL, &routine, philo[i]) != 0)
 		{
+			free_global(g);
 			printf("Error: thread creation failed\n");
 			return (1);
 		}
@@ -88,15 +94,13 @@ static int	init_threads(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 	{
 		if (pthread_join(philo[i]->th, NULL) != 0)
 		{
+			free_global(g);
 			printf("Error: thread haven't been joined\n");
 			return (1);
 		}
 		printf("Thread %d has finished execution\n", i);
 		i++;
 	}
-	pthread_mutex_destroy(g->mutex);
-	//free_philos(philo, nb_of_philo);
-	/*free global struct*/
 	return (0);
 }
 
@@ -110,8 +114,8 @@ static int	init_philo(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 		philo[i] = malloc(sizeof(t_philo));
 		if (!philo[i])
 		{
-			// free_philos(philo, i);
-			printf("Error: allocation failed\n");
+			free_global(g);
+			printf("Error: philo allocation failed\n");
 			return (1);
 		}
 		memset(philo[i], 0, sizeof(t_philo));
@@ -120,6 +124,31 @@ static int	init_philo(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 		philo[i]->time_to_sleep = g->time_to_sleep;
 		philo[i]->id = i;
 		philo[i]->g = g;
+		philo[i]->right_fork = g->mutex[i];
+		if (i == 0)
+			philo[i]->left_fork = g->mutex[nb_of_philo - 1];
+		else
+			philo[i]->left_fork = g->mutex[i - 1];
+		i++;
+	}
+	return (0);
+}
+
+static int	init_mutex(t_global *g, pthread_mutex_t **mutex, unsigned int nb_of_philo)
+{
+	unsigned int	i;
+
+	i = 0;
+	while (i < nb_of_philo)
+	{
+		mutex[i] = malloc(sizeof(pthread_mutex_t));
+		if (!mutex[i])
+		{
+			free_global(g);
+			printf("Error: mutex allocation failed\n");
+			return (1);
+		}
+		pthread_mutex_init(mutex[i], NULL);
 		i++;
 	}
 	return (0);
@@ -129,10 +158,10 @@ static int	init(t_global *g, int argc, char **argv)
 {
 	if (init_struct(g, argc, argv))
 		return (1);
-	//print_global(g);
+	if (init_mutex(g, g->mutex, g->nb_of_philo))
+		return (1);
 	if (init_philo(g, g->philo, g->nb_of_philo))
 		return (1);
-	//print_global(g);
 	if (init_threads(g, g->philo, g->nb_of_philo))
 		return (1);
 	return (0);
