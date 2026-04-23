@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/23 18:19:42 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/23 18:31:02 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/23 19:04:11 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,9 +74,9 @@ int	init_struct(t_global *g, int argc, char **argv)
 	g->time_to_eat = ft_atoi(argv[3]);
 	g->time_to_sleep = ft_atoi(argv[4]);
 	if (argc == 6)
-		g->nb_eat = ft_atoi(argv[5]);
+		g->max_eat = ft_atoi(argv[5]);
 	else
-		g->nb_eat = -1;
+		g->max_eat = -1;
 	
 	g->philo = malloc(sizeof(t_philo *) * g->nb_of_philo);
 	if (!g->philo)
@@ -91,6 +91,10 @@ int	init_struct(t_global *g, int argc, char **argv)
 	g->ok_init_mutex = malloc(sizeof(pthread_mutex_t));
 	if (!g->ok_init_mutex)
 		return (free(g->philo), free(g->fork_mutex), 1);
+
+	g->access_stop_var_mutex = malloc(sizeof(pthread_mutex_t));
+	if (!g->access_stop_var_mutex)
+		return (free(g->philo), free(g->fork_mutex), free(g->ok_init_mutex), 1);
 
 	return (0);
 }

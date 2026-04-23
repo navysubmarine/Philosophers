@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/22 14:31:58 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/23 14:28:25 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/23 18:51:28 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	print_global(t_global *g)
 	printf("  time_to_die  : %u\n", g->time_to_die);
 	printf("  time_to_eat  : %u\n", g->time_to_eat);
 	printf("  time_to_sleep: %u\n", g->time_to_sleep);
-	printf("  nb_eat       : %d\n", g->nb_eat);
+	printf("  nb_eat       : %d\n", g->max_eat);
 	printf("  mutex ptr    : %p\n", (void *)g->fork_mutex);
 	printf("  philo ptr    : %p\n", (void *)g->philo);
 	printf("\n=== Philosophers ===\n");

@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:17:01 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/23 18:29:57 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/23 18:59:24 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ typedef struct s_philo
 	pthread_t		th;
 	unsigned int	id;
 
+	unsigned int	times_ive_eaten;
+	
 	long			start;
 	long			end;
 	
@@ -50,18 +52,24 @@ typedef struct s_global
 {
 	t_philo			**philo;
 	pthread_t		supervisor;
+	
 	pthread_mutex_t	**fork_mutex;
 	pthread_mutex_t	*ok_init_mutex;
+	pthread_mutex_t *access_stop_var_mutex;
+	
 	unsigned int	nb_of_philo;
 	unsigned int	time_to_die;
 	unsigned int	time_to_eat;
 	unsigned int	time_to_sleep;
-	int				nb_eat;
+	
+	unsigned int				max_eat;
+	
 	int				stop;
 }					t_global;
 
 /*HELPER*/
 int					ft_atoi(const char *nptr);
+long				getcurrenttime(void);
 /*CHECK ARGS*/
 int					is_valid_number(char *arg);
 int					check_arg(int argc, char **argv);

@@ -6,25 +6,11 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:19:29 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/23 18:22:30 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/23 19:07:22 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-long	getcurrenttime(void)
-{
-	struct timeval	time;
-	long			value;
-
-	if (gettimeofday(&time, NULL))
-		return (-1);
-	else
-	{
-		value = (long)time.tv_sec * 1000 + (long)time.tv_usec / 1000;
-		return (value);
-	}
-}
 
 int	think(t_philo *philo)
 {
@@ -69,9 +55,7 @@ int	my_sleep(t_philo *philo)
 void	*routine_philo(void *data)
 {
 	t_philo	*philo;
-	int		i;
 
-	i = 0;
 	philo = (t_philo *)data;
 	pthread_mutex_lock(philo->g->ok_init_mutex);
 	pthread_mutex_unlock(philo->g->ok_init_mutex);
@@ -81,13 +65,26 @@ void	*routine_philo(void *data)
 	philo->start = philo->end;
 	if (philo->g->stop)
 		return (NULL);
-	while (1)
+	if (philo->g->max_eat)
 	{
-		think(philo);
-		if (eat(philo))
-			return (NULL);
-		my_sleep(philo);
-		i++;
+		while (philo->times_ive_eaten < philo->g->max_eat)
+		{
+			think(philo);
+			if (eat(philo))
+				return (NULL);
+			philo->times_ive_eaten++;
+			my_sleep(philo);
+		}
+	}
+	else
+	{
+		while (1)
+		{
+			think(philo);
+			if (eat(philo))
+				return (NULL);
+			my_sleep(philo);
+		}
 	}
 	return (NULL);
 }
@@ -99,13 +96,16 @@ void	*routine_supervisor(void *data)
 
 	i = 0;
 	g = (t_global *)data;
+	pthread_mutex_init(g->access_stop_var_mutex, NULL);
 	while (1)
 	{
 		while (i < g->nb_of_philo)
 		{
 			if((g->philo[i]->end - g->philo[i]->start) > g->time_to_die)
 			{
+				pthread_mutex_lock(g->access_stop_var_mutex);
 				g->stop = 1;
+				pthread_mutex_unlock(g->access_stop_var_mutex);
 				printf("%sPhilo %d is dead %s\n", PURPLE, g->philo[i]->id, NC);
 				return (NULL);
 			}	
