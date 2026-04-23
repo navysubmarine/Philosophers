@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:17:01 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/22 17:22:32 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/23 15:52:00 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ typedef struct s_philo
 
 	long			start;
 	long			end;
+	
 	unsigned int	time_to_die;
 	unsigned int	time_to_eat;
 	unsigned int	time_to_sleep;
@@ -48,6 +49,7 @@ typedef struct s_philo
 typedef struct s_global
 {
 	t_philo			**philo;
+	pthread_t		*supervisor;
 	pthread_mutex_t	**fork_mutex;
 	pthread_mutex_t	*ok_init_mutex;
 	unsigned int	nb_of_philo;
@@ -55,6 +57,7 @@ typedef struct s_global
 	unsigned int	time_to_eat;
 	unsigned int	time_to_sleep;
 	int				nb_eat;
+	int				stop;
 }					t_global;
 
 /*HELPER*/

@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:19:29 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/23 12:48:33 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/23 16:03:30 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,32 +28,45 @@ long	getcurrenttime(void)
 
 int	think(t_philo *philo)
 {
+	if(philo->g->stop)
+		return (1);
 	printf("%sID: %d - I am thinking%s\n", GREEN, philo->id, NC);
 	return (0);
 }
 
 int	eat(t_philo *philo)
 {
+	if (philo->g->stop)
+		return (1);
 	pthread_mutex_lock(philo->right_fork);
 	pthread_mutex_lock(philo->left_fork);
 	philo->end = getcurrenttime();
 	if (!philo->end)
-		return (NULL);
-	if ((philo->end - philo->start) > philo->time_to_die)
-	{
-		printf("%sID: %d - I am dead %s\n", PURPLE, philo->id, NC);
-		return (NULL);
-	}
+		return (1);
+	if (philo->g->stop)
+		return (1);
 	printf("%sID: %d - I am eating%s\n", YELLOW, philo->id, NC);
 	philo->start = getcurrenttime();
 	if (!philo->start)
-		return (NULL);
+		return (1);
 	usleep(philo->time_to_eat * 1000);
 	pthread_mutex_unlock(philo->right_fork);
 	pthread_mutex_unlock(philo->left_fork);
+	if (philo->g->stop)
+		return (1);
+	return (0);
 }
 
-void	*routine(void *data)
+int	my_sleep(t_philo *philo)
+{
+	if (philo->g->stop)
+		return (1);
+	printf("%sID: %d - I am sleeping%s\n", BLUE, philo->id, NC);
+	usleep(philo->time_to_sleep * 1000);
+	return (0);
+}
+
+void	*routine_philo(void *data)
 {
 	t_philo	*philo;
 	int		i;
@@ -66,19 +79,43 @@ void	*routine(void *data)
 	if (!philo->end)
 		return (NULL);
 	philo->start = philo->end;
+	if (philo->g->stop)
+		return (NULL);
 	while (1)
 	{
 		think(philo);
 		if (eat(philo))
 			return (NULL);
-		if (eat(philo))
-			return (NULL);
-		printf("%sID: %d - I am sleeping%s\n", BLUE, philo->id, NC);
-		usleep(philo->time_to_sleep * 1000);
+		my_sleep(philo);
 		i++;
 	}
 	return (NULL);
 }
+
+void	*routine_supervisor(void *data)
+{
+	unsigned int i;
+	t_global *g;
+
+	i = 0;
+	g = (t_global *)data;
+	while (1)
+	{
+		while (i < g->nb_of_philo)
+		{
+			if((g->philo[i]->end - g->philo[i]->start) > g->time_to_die)
+			{
+				g->stop = 1;
+				printf("%sPhilo %d is dead %s\n", PURPLE, g->philo[i]->id, NC);
+				return (NULL);
+			}	
+			i++;
+		}
+		i = 0;
+	}
+	return (NULL);
+}
+
 
 int	init_struct(t_global *g, int argc, char **argv)
 {
@@ -100,6 +137,9 @@ int	init_struct(t_global *g, int argc, char **argv)
 	g->ok_init_mutex = malloc(sizeof(pthread_mutex_t));
 	if (!g->ok_init_mutex)
 		return (free(g->philo), free(g->fork_mutex), 1);
+	g->supervisor = malloc(sizeof(pthread_t));
+	if (!g->supervisor)
+		return (free(g->philo), free(g->fork_mutex), free(g->ok_init_mutex), 1);
 	return (0);
 }
 
@@ -111,7 +151,7 @@ int	init_threads(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 	pthread_mutex_lock(g->ok_init_mutex);
 	while (i < nb_of_philo)
 	{
-		if (pthread_create(&(philo[i]->th), NULL, &routine, philo[i]) != 0)
+		if (pthread_create(&(philo[i]->th), NULL, &routine_philo, philo[i]) != 0)
 		{
 			free_global(g);
 			printf("Error: thread creation failed\n");
@@ -161,8 +201,22 @@ int	init_philo(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 			philo[i]->left_fork = g->fork_mutex[nb_of_philo - 1];
 		else
 			philo[i]->left_fork = g->fork_mutex[i - 1];
+		philo[i]->end = 0;
+		philo[i]->start = 0;
 		i++;
 	}
+	return (0);
+}
+
+int	init_supervisor(t_global *g)
+{
+	if (pthread_create(g->supervisor, NULL, &routine_supervisor, g) != 0)
+	{
+		free_global(g);
+		printf("Error: supervisor thread creation failed\n");
+		return (1);
+	}
+	printf("Supervisor a ete cree\n");
 	return (0);
 }
 
@@ -195,6 +249,9 @@ static int	init(t_global *g, int argc, char **argv)
 		return (1);
 	if (init_philo(g, g->philo, g->nb_of_philo))
 		return (1);
+	if (init_supervisor(g))
+	 	return (1);
+	print_global(g);
 	if (init_threads(g, g->philo, g->nb_of_philo))
 		return (1);
 	return (0);
