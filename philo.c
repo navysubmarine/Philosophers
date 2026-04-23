@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:19:29 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/22 17:32:53 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/23 12:48:33 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,33 @@ long	getcurrenttime(void)
 	}
 }
 
+int	think(t_philo *philo)
+{
+	printf("%sID: %d - I am thinking%s\n", GREEN, philo->id, NC);
+	return (0);
+}
+
+int	eat(t_philo *philo)
+{
+	pthread_mutex_lock(philo->right_fork);
+	pthread_mutex_lock(philo->left_fork);
+	philo->end = getcurrenttime();
+	if (!philo->end)
+		return (NULL);
+	if ((philo->end - philo->start) > philo->time_to_die)
+	{
+		printf("%sID: %d - I am dead %s\n", PURPLE, philo->id, NC);
+		return (NULL);
+	}
+	printf("%sID: %d - I am eating%s\n", YELLOW, philo->id, NC);
+	philo->start = getcurrenttime();
+	if (!philo->start)
+		return (NULL);
+	usleep(philo->time_to_eat * 1000);
+	pthread_mutex_unlock(philo->right_fork);
+	pthread_mutex_unlock(philo->left_fork);
+}
+
 void	*routine(void *data)
 {
 	t_philo	*philo;
@@ -35,30 +62,19 @@ void	*routine(void *data)
 	philo = (t_philo *)data;
 	pthread_mutex_lock(philo->g->ok_init_mutex);
 	pthread_mutex_unlock(philo->g->ok_init_mutex);
+	philo->end = getcurrenttime();
+	if (!philo->end)
+		return (NULL);
+	philo->start = philo->end;
 	while (1)
 	{
-		philo->end = getcurrenttime();
-		if (!philo->end)
+		think(philo);
+		if (eat(philo))
 			return (NULL);
-		if ((philo->end - philo->start) > philo->time_to_die)
-		{
-			printf("%sID: %d - I am dead %s\n", PURPLE, philo->id, NC);
+		if (eat(philo))
 			return (NULL);
-		}
-		pthread_mutex_lock(philo->right_fork);
-		pthread_mutex_lock(philo->left_fork);
-		philo->start = getcurrenttime();
-		if (!philo->start)
-			return (NULL);
-		printf("%sID: %d - I am eating%s\n", YELLOW, philo->id, NC);
-		usleep(philo->time_to_eat * 1000);
-		pthread_mutex_unlock(philo->right_fork);
-		pthread_mutex_unlock(philo->left_fork);
-		printf("%sID: %d - I am sleeping%s\n", RED, philo->id, NC);
+		printf("%sID: %d - I am sleeping%s\n", BLUE, philo->id, NC);
 		usleep(philo->time_to_sleep * 1000);
-		printf("%sID: %d - I am thinking%s\n", GREEN, philo->id, NC);
-		//printf("%sID: %d - last time I ate : %lu%s\n", BLUE, philo->id,
-		//	philo->start, NC);
 		i++;
 	}
 	return (NULL);
