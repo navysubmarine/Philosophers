@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:19:29 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/24 12:46:20 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/24 16:30:47 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	think(t_philo *philo)
 {
 	if(philo->g->stop)
 		return (1);
-	printf("%sID: %d - I am thinking%s\n", GREEN, philo->id, NC);
+	print_messages(1, philo->id, philo);
 	return (0);
 }
 
@@ -24,24 +24,40 @@ int	eat(t_philo *philo)
 {
 	if (philo->g->stop)
 		return (1);
-	pthread_mutex_lock(philo->right_fork);
-	pthread_mutex_lock(philo->left_fork);
-	philo->end = getcurrenttime();
-	if (!philo->end)
-		return (1);
+	if (philo->id % 2)
+	{
+		pthread_mutex_lock(&(philo->right_fork));
+		pthread_mutex_lock(&(philo->left_fork));
+	}
+	else
+	{
+		pthread_mutex_lock(&(philo->left_fork));
+		pthread_mutex_lock(&(philo->right_fork));		
+	}
 	if (philo->g->stop)
 	{
-		pthread_mutex_unlock(philo->right_fork);
-		pthread_mutex_unlock(philo->left_fork);
+		pthread_mutex_unlock(&(philo->right_fork));
+		pthread_mutex_unlock(&(philo->left_fork));
 		return (1);
 	}
-	printf("%sID: %d - I am eating%s\n", YELLOW, philo->id, NC);
+	print_messages(2, philo->id, philo);
 	philo->start = getcurrenttime();
 	if (!philo->start)
+	{
+		pthread_mutex_unlock(&(philo->right_fork));
+		pthread_mutex_unlock(&(philo->left_fork));
 		return (1);
+	}
+	philo->last_meal_time = getcurrenttime();
+	if (!philo->last_meal_time)
+	{
+		pthread_mutex_unlock(&(philo->right_fork));
+		pthread_mutex_unlock(&(philo->left_fork));
+		return (1);
+	}
 	usleep(philo->time_to_eat * 1000);
-	pthread_mutex_unlock(philo->right_fork);
-	pthread_mutex_unlock(philo->left_fork);
+	pthread_mutex_unlock(&(philo->right_fork));
+	pthread_mutex_unlock(&(philo->left_fork));
 	if (philo->g->stop)
 		return (1);
 	return (0);
@@ -51,8 +67,15 @@ int	my_sleep(t_philo *philo)
 {
 	if (philo->g->stop)
 		return (1);
-	printf("%sID: %d - I am sleeping%s\n", BLUE, philo->id, NC);
-	usleep(philo->time_to_sleep * 1000);
+	print_messages(3, philo->id, philo);
+	if (philo->g->stop)
+		return (1);
+	usleep(philo->time_to_sleep / 2 * 1000);
+	if (philo->g->stop)
+		return (1);
+	usleep(philo->time_to_sleep / 2 * 1000);
+	if (philo->g->stop)
+		return (1);
 	return (0);
 }
 
@@ -61,20 +84,19 @@ void	*routine_philo(void *data)
 	t_philo	*philo;
 
 	philo = (t_philo *)data;
-	pthread_mutex_lock(philo->g->ok_init_mutex);
-	pthread_mutex_unlock(philo->g->ok_init_mutex);
-	philo->end = getcurrenttime();
-	if (!philo->end)
+	pthread_mutex_lock(&(philo->g->ok_init_mutex));
+	pthread_mutex_unlock(&(philo->g->ok_init_mutex));
+	philo->last_meal_time = getcurrenttime();
+	if (!philo->last_meal_time)
 		return (NULL);
-	philo->start = philo->end;
+	philo->start = philo->last_meal_time;
 	if (philo->g->stop)
 		return (NULL);
 	if (philo->g->max_eat)
 	{
 		while (philo->times_ive_eaten < philo->g->max_eat)
 		{
-			think(philo);
-			if (eat(philo))
+			if (think(philo) || eat(philo))
 				return (NULL);
 			philo->times_ive_eaten++;
 			my_sleep(philo);
@@ -84,12 +106,20 @@ void	*routine_philo(void *data)
 	{
 		while (1)
 		{
-			think(philo);
-			if (eat(philo))
+			if(think(philo) || eat(philo) || my_sleep(philo))
 				return (NULL);
-			my_sleep(philo);
 		}
 	}
+	return (NULL);
+}
+
+void	*routine_solo_philo(void *data)
+{
+	t_philo	*philo;
+
+	philo = (t_philo *)data;
+	think(philo);
+	print_messages(4, philo->id, philo);
 	return (NULL);
 }
 
@@ -100,17 +130,17 @@ void	*routine_supervisor(void *data)
 
 	i = 0;
 	g = (t_global *)data;
-	pthread_mutex_init(g->access_stop_var_mutex, NULL);
+	usleep(1000);
 	while (1)
 	{
 		while (i < g->nb_of_philo)
 		{
-			if((g->philo[i]->end - g->philo[i]->start) > g->time_to_die)
+			if((getcurrenttime() - g->philo[i]->last_meal_time) > g->time_to_die)
 			{
-				pthread_mutex_lock(g->access_stop_var_mutex);
+				pthread_mutex_lock(&(g->access_stop_var_mutex));
 				g->stop = 1;
-				pthread_mutex_unlock(g->access_stop_var_mutex);
-				printf("%sPhilo %d is dead %s\n", PURPLE, g->philo[i]->id, NC);
+				pthread_mutex_unlock(&(g->access_stop_var_mutex));
+				print_messages(4, g->philo[i]->id, g->philo[i]);
 				return (NULL);
 			}	
 			i++;
@@ -125,32 +155,51 @@ int	init_threads(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 	unsigned int	i;
 
 	i = 0;
-	pthread_mutex_lock(g->ok_init_mutex);
-	while (i < nb_of_philo)
+	pthread_mutex_lock(&(g->ok_init_mutex));
+	if (nb_of_philo == 1)
 	{
-		if (pthread_create(&(philo[i]->th), NULL, &routine_philo, philo[i]) != 0)
+		if (pthread_create(&(philo[0]->th), NULL, &routine_solo_philo, philo[0]) != 0)
 		{
 			free_global(g);
 			printf("Error: thread creation failed\n");
 			return (1);
 		}
-		printf("Thread %d a ete cree\n", i + 1);
-		i++;
 	}
-	pthread_mutex_unlock(g->ok_init_mutex);
+	else
+	{
+		while (i < nb_of_philo)
+		{
+			if (pthread_create(&(philo[i]->th), NULL, &routine_philo, philo[i]) != 0)
+			{
+				free_global(g);
+				printf("Error: thread creation failed\n");
+				return (1);
+			}
+			printf("Thread %d a ete cree\n", i + 1);
+			i++;
+		}
+	}
+	pthread_mutex_unlock(&(g->ok_init_mutex));
 	i = 0;
 	while (i < nb_of_philo)
 	{
-		
 		if (pthread_join(philo[i]->th, NULL) != 0)
 		{
 			free_global(g);
-			printf("Error: thread haven't been joined\n");
+			printf("Error: philo threads haven't been joined\n");
 			return (1);
 		}
 		printf("Thread %d has finished execution\n", i + 1);
 		i++;
 	}
+	
+	if (pthread_join(g->supervisor, NULL) != 0)
+	{
+		free_global(g);
+		printf("Error: supervisor thread hasn't been joined\n");
+		return (1);
+	}
+
 	return (0);
 }
 

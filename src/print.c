@@ -6,23 +6,46 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/22 14:31:58 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/23 18:51:28 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/24 16:24:13 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../philo.h"
+
+void	print_messages(int code, unsigned int id, t_philo *philo)
+{
+	static int death_has_occurred = 0;
+
+	pthread_mutex_lock(&(philo->g->access_print_messages));
+	if (!death_has_occurred)
+	{
+		if (code == 1)
+			printf("%sID: %d - I am thinking%s\n", GREEN, id, NC);
+		if (code == 2)
+			printf("%sID: %d - I am eating%s\n", BLUE, id, NC);
+		if (code == 3)
+			printf("%sID: %d - I am sleeping%s\n", PURPLE, id, NC);
+		if (code == 4)
+		{
+			printf("%sID: %d - I am dead%s\n", RED, id, NC);
+			death_has_occurred = 1;
+		}
+	}
+	pthread_mutex_unlock(&(philo->g->access_print_messages));
+}
+
 
 void	print_philo(t_philo *philo)
 {
 	printf("  [Philo %u]\n", philo->id);
 	printf("    id              : %u\n", philo->id);
 	printf("    start		    : %ld\n", philo->start);
-	printf("    end			    : %ld\n", philo->end);	
+	printf("    last_meal_time  : %ld\n", philo->last_meal_time);	
 	printf("    time_to_die     : %u\n", philo->time_to_die);
 	printf("    time_to_eat     : %u\n", philo->time_to_eat);
 	printf("    time_to_sleep   : %u\n", philo->time_to_sleep);
-	printf("    left_fork  ptr  : %p\n", (void *)philo->left_fork);
-	printf("    right_fork  ptr : %p\n", (void *)philo->right_fork);
+	//printf("    left_fork  ptr  : %p\n", (void *)philo->left_fork);
+	//printf("    right_fork  ptr : %p\n", (void *)philo->right_fork);
 	printf("    g ptr           : %p\n", (void *)philo->g);
 }
 
