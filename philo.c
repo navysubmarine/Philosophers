@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:19:29 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/23 19:07:22 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/24 12:46:20 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,11 @@ int	eat(t_philo *philo)
 	if (!philo->end)
 		return (1);
 	if (philo->g->stop)
+	{
+		pthread_mutex_unlock(philo->right_fork);
+		pthread_mutex_unlock(philo->left_fork);
 		return (1);
+	}
 	printf("%sID: %d - I am eating%s\n", YELLOW, philo->id, NC);
 	philo->start = getcurrenttime();
 	if (!philo->start)
@@ -137,6 +141,7 @@ int	init_threads(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 	i = 0;
 	while (i < nb_of_philo)
 	{
+		
 		if (pthread_join(philo[i]->th, NULL) != 0)
 		{
 			free_global(g);
