@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/23 18:19:42 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/24 16:15:18 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/24 18:41:12 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,17 +26,17 @@ int	init_philo(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 			return (1);
 		}
 		memset(philo[i], 0, sizeof(t_philo));
+		philo[i]->last_meal_time = getcurrenttime();
 		philo[i]->time_to_die = g->time_to_die;
 		philo[i]->time_to_eat = g->time_to_eat;
 		philo[i]->time_to_sleep = g->time_to_sleep;
 		philo[i]->id = i + 1;
 		philo[i]->g = g;
-		philo[i]->right_fork = *(g->fork_mutex[i]);
+		philo[i]->right_fork = g->fork_mutex[i];
 		if (i == 0)
-			philo[i]->left_fork = *(g->fork_mutex[nb_of_philo - 1]);
+			philo[i]->left_fork = g->fork_mutex[nb_of_philo - 1];
 		else
-			philo[i]->left_fork = *(g->fork_mutex[i - 1]);
-		philo[i]->last_meal_time = 0;
+			philo[i]->left_fork = g->fork_mutex[i - 1];
 		philo[i]->start = 0;
 		i++;
 	}
@@ -66,6 +66,8 @@ int	init_mutex(t_global *g, pthread_mutex_t **mutex, unsigned int nb_of_philo)
 	if (pthread_mutex_init(&(g->access_stop_var_mutex), NULL))
 		return (1);
 	if (pthread_mutex_init(&(g->access_print_messages), NULL))
+		return (1);
+	if (pthread_mutex_init(&(g->access_last_meal_time), NULL))
 		return (1);
 	return (0);
 }

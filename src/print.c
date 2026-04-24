@@ -6,13 +6,13 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/22 14:31:58 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/24 16:24:13 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/24 18:42:08 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../philo.h"
 
-void	print_messages(int code, unsigned int id, t_philo *philo)
+void	print_messages(int code, unsigned int id, t_philo *philo, long ts)
 {
 	static int death_has_occurred = 0;
 
@@ -20,15 +20,19 @@ void	print_messages(int code, unsigned int id, t_philo *philo)
 	if (!death_has_occurred)
 	{
 		if (code == 1)
-			printf("%sID: %d - I am thinking%s\n", GREEN, id, NC);
-		if (code == 2)
-			printf("%sID: %d - I am eating%s\n", BLUE, id, NC);
-		if (code == 3)
-			printf("%sID: %d - I am sleeping%s\n", PURPLE, id, NC);
-		if (code == 4)
+			printf("%s%ld %d is thinking%s\n", GREEN, ts, id, NC);
+		else if (code == 2)
+			printf("%s%ld %d is eating%s\n", BLUE, ts, id, NC);
+		else if (code == 3)
+			printf("%s%ld %d is sleeping%s\n", PURPLE, ts, id, NC);
+		else if (code == 4)
 		{
-			printf("%sID: %d - I am dead%s\n", RED, id, NC);
+			printf("%s%ld %d died%s\n", RED, ts, id, NC);
 			death_has_occurred = 1;
+		}
+		else if (code == 5)
+		{
+			printf("%s%ld %d has taken a fork%s\n", YELLOW, ts, id, NC);
 		}
 	}
 	pthread_mutex_unlock(&(philo->g->access_print_messages));
@@ -51,7 +55,7 @@ void	print_philo(t_philo *philo)
 
 void	print_global(t_global *g)
 {
-	unsigned int i;
+	int i;
 
 	printf("=== t_global ===\n");
 	printf("  fork_mutex[1]: %p\n", g->fork_mutex[0]);

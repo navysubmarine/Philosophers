@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:19:29 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/24 16:30:47 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/24 18:41:34 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	think(t_philo *philo)
 {
 	if(philo->g->stop)
 		return (1);
-	print_messages(1, philo->id, philo);
+	print_messages(1, philo->id, philo, getcurrenttime());
 	return (0);
 }
 
@@ -24,40 +24,47 @@ int	eat(t_philo *philo)
 {
 	if (philo->g->stop)
 		return (1);
+	
 	if (philo->id % 2)
 	{
-		pthread_mutex_lock(&(philo->right_fork));
-		pthread_mutex_lock(&(philo->left_fork));
+		pthread_mutex_lock(philo->right_fork);
+		print_messages(5, philo->id, philo, getcurrenttime());
+		pthread_mutex_lock(philo->left_fork);
+		print_messages(5, philo->id, philo, getcurrenttime());
 	}
 	else
 	{
-		pthread_mutex_lock(&(philo->left_fork));
-		pthread_mutex_lock(&(philo->right_fork));		
+		pthread_mutex_lock(philo->left_fork);
+		print_messages(5, philo->id, philo, getcurrenttime());
+		pthread_mutex_lock(philo->right_fork);
+		print_messages(5, philo->id, philo, getcurrenttime());
 	}
 	if (philo->g->stop)
 	{
-		pthread_mutex_unlock(&(philo->right_fork));
-		pthread_mutex_unlock(&(philo->left_fork));
+		pthread_mutex_unlock(philo->right_fork);
+		pthread_mutex_unlock(philo->left_fork);
 		return (1);
 	}
-	print_messages(2, philo->id, philo);
+	print_messages(2, philo->id, philo, getcurrenttime());
 	philo->start = getcurrenttime();
 	if (!philo->start)
 	{
-		pthread_mutex_unlock(&(philo->right_fork));
-		pthread_mutex_unlock(&(philo->left_fork));
+		pthread_mutex_unlock(philo->right_fork);
+		pthread_mutex_unlock(philo->left_fork);
 		return (1);
 	}
+	pthread_mutex_lock(&(philo->g->access_last_meal_time));
 	philo->last_meal_time = getcurrenttime();
+	pthread_mutex_unlock(&(philo->g->access_last_meal_time));
 	if (!philo->last_meal_time)
 	{
-		pthread_mutex_unlock(&(philo->right_fork));
-		pthread_mutex_unlock(&(philo->left_fork));
+		pthread_mutex_unlock(philo->right_fork);
+		pthread_mutex_unlock(philo->left_fork);
 		return (1);
 	}
 	usleep(philo->time_to_eat * 1000);
-	pthread_mutex_unlock(&(philo->right_fork));
-	pthread_mutex_unlock(&(philo->left_fork));
+	pthread_mutex_unlock(philo->right_fork);
+	pthread_mutex_unlock(philo->left_fork);
 	if (philo->g->stop)
 		return (1);
 	return (0);
@@ -67,7 +74,7 @@ int	my_sleep(t_philo *philo)
 {
 	if (philo->g->stop)
 		return (1);
-	print_messages(3, philo->id, philo);
+	print_messages(3, philo->id, philo, getcurrenttime());
 	if (philo->g->stop)
 		return (1);
 	usleep(philo->time_to_sleep / 2 * 1000);
@@ -86,21 +93,41 @@ void	*routine_philo(void *data)
 	philo = (t_philo *)data;
 	pthread_mutex_lock(&(philo->g->ok_init_mutex));
 	pthread_mutex_unlock(&(philo->g->ok_init_mutex));
+	
+	pthread_mutex_lock(&(philo->g->access_last_meal_time));
 	philo->last_meal_time = getcurrenttime();
+	pthread_mutex_unlock(&(philo->g->access_last_meal_time));
+
 	if (!philo->last_meal_time)
 		return (NULL);
 	philo->start = philo->last_meal_time;
 	if (philo->g->stop)
 		return (NULL);
-	if (philo->g->max_eat)
+	if (philo->g->max_eat > 0)
 	{
 		while (philo->times_ive_eaten < philo->g->max_eat)
 		{
 			if (think(philo) || eat(philo))
 				return (NULL);
 			philo->times_ive_eaten++;
-			my_sleep(philo);
+			if (philo->times_ive_eaten == philo->g->max_eat)
+    		{
+        		pthread_mutex_lock(&(philo->g->access_stop_var_mutex));
+       	 		philo->g->philos_done++;
+        		if (philo->g->philos_done == (int)philo->g->nb_of_philo)
+            	philo->g->stop = 1;
+        		pthread_mutex_unlock(&(philo->g->access_stop_var_mutex));
+        		return (NULL);
+  			}
+			if (my_sleep(philo))
+				return (NULL);
 		}
+		pthread_mutex_lock(&(philo->g->access_stop_var_mutex));
+		philo->g->philos_done++;
+		if (philo->g->philos_done == philo->g->nb_of_philo)
+			philo->g->stop = 1;
+		pthread_mutex_unlock(&(philo->g->access_stop_var_mutex));
+		return (NULL);
 	}
 	else
 	{
@@ -119,13 +146,13 @@ void	*routine_solo_philo(void *data)
 
 	philo = (t_philo *)data;
 	think(philo);
-	print_messages(4, philo->id, philo);
+	print_messages(4, philo->id, philo, getcurrenttime());
 	return (NULL);
 }
 
 void	*routine_supervisor(void *data)
 {
-	unsigned int i;
+	int i;
 	t_global *g;
 
 	i = 0;
@@ -133,16 +160,26 @@ void	*routine_supervisor(void *data)
 	usleep(1000);
 	while (1)
 	{
+        pthread_mutex_lock(&(g->access_stop_var_mutex));
+        if (g->stop)
+        {
+            pthread_mutex_unlock(&(g->access_stop_var_mutex));
+            return (NULL);
+        }
+        pthread_mutex_unlock(&(g->access_stop_var_mutex));
 		while (i < g->nb_of_philo)
 		{
+			pthread_mutex_lock(&(g->access_last_meal_time));
 			if((getcurrenttime() - g->philo[i]->last_meal_time) > g->time_to_die)
 			{
+				pthread_mutex_unlock(&(g->access_last_meal_time));
 				pthread_mutex_lock(&(g->access_stop_var_mutex));
 				g->stop = 1;
 				pthread_mutex_unlock(&(g->access_stop_var_mutex));
-				print_messages(4, g->philo[i]->id, g->philo[i]);
+				print_messages(4, g->philo[i]->id, g->philo[i], getcurrenttime());
 				return (NULL);
-			}	
+			}
+			pthread_mutex_unlock(&(g->access_last_meal_time));
 			i++;
 		}
 		i = 0;
@@ -175,7 +212,7 @@ int	init_threads(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 				printf("Error: thread creation failed\n");
 				return (1);
 			}
-			printf("Thread %d a ete cree\n", i + 1);
+			//printf("Thread %d a ete cree\n", i + 1);
 			i++;
 		}
 	}
@@ -189,17 +226,15 @@ int	init_threads(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 			printf("Error: philo threads haven't been joined\n");
 			return (1);
 		}
-		printf("Thread %d has finished execution\n", i + 1);
+		//printf("Thread %d has finished execution\n", i + 1);
 		i++;
 	}
-	
 	if (pthread_join(g->supervisor, NULL) != 0)
 	{
 		free_global(g);
 		printf("Error: supervisor thread hasn't been joined\n");
 		return (1);
 	}
-
 	return (0);
 }
 
@@ -211,7 +246,7 @@ int	init_supervisor(t_global *g)
 		printf("Error: supervisor thread creation failed\n");
 		return (1);
 	}
-	printf("Supervisor a ete cree\n");
+	//printf("Supervisor a ete cree\n");
 	return (0);
 }
 

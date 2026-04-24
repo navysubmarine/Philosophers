@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:17:01 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/24 16:22:26 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/24 18:21:30 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ typedef struct s_philo
 	pthread_t		th;
 	unsigned int	id;
 
-	unsigned int	times_ive_eaten;
+	int	times_ive_eaten;
 	
 	long			start;
 	long			last_meal_time;
@@ -42,8 +42,8 @@ typedef struct s_philo
 	unsigned int	time_to_eat;
 	unsigned int	time_to_sleep;
 
-	pthread_mutex_t	left_fork;
-	pthread_mutex_t	right_fork;
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*right_fork;
 
 	struct s_global	*g;
 }					t_philo;
@@ -57,13 +57,16 @@ typedef struct s_global
 	pthread_mutex_t	ok_init_mutex;
 	pthread_mutex_t access_stop_var_mutex;
 	pthread_mutex_t	access_print_messages;
+	pthread_mutex_t	access_last_meal_time;
 	
-	unsigned int	nb_of_philo;
+	int	nb_of_philo;
 	unsigned int	time_to_die;
 	unsigned int	time_to_eat;
 	unsigned int	time_to_sleep;
+
+	int				philos_done;
 	
-	unsigned int	max_eat;
+	int	max_eat;
 	
 	int		stop;
 }					t_global;
@@ -87,4 +90,5 @@ void				free_global(t_global *g);
 /*PRINT*/
 void				print_philo(t_philo *philo);
 void				print_global(t_global *g);
-void				print_messages(int code, unsigned int id, t_philo *philo);
+
+void	print_messages(int code, unsigned int id, t_philo *philo, long ts);

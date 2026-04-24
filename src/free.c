@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/21 15:06:06 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/22 15:48:54 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/24 18:23:42 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void    free_philos(t_philo **philo, unsigned int nb)
 
 void    free_global(t_global *g)
 {
-    unsigned int    i;
+    int    i;
 
     if (!g)
         return ;
