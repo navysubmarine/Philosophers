@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 14:59:01 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/27 16:28:51 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/27 18:48:03 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,19 +26,33 @@ int	take_forks(t_philo *philo)
 	{
 		pthread_mutex_lock(philo->right_fork);
 		if (print_messages(TOOK_FORK, philo->id, philo))
+		{
+			pthread_mutex_unlock(philo->right_fork);
 			return (1);
+		}
 		pthread_mutex_lock(philo->left_fork);
 		if (print_messages(TOOK_FORK, philo->id, philo))
+		{
+			pthread_mutex_unlock(philo->right_fork);
+			pthread_mutex_unlock(philo->left_fork);
 			return (1);
+		}
 	}
 	else
 	{
 		pthread_mutex_lock(philo->left_fork);
 		if (print_messages(TOOK_FORK, philo->id, philo))
+		{
+			pthread_mutex_unlock(philo->left_fork);
 			return (1);
+		}
 		pthread_mutex_lock(philo->right_fork);
 		if (print_messages(TOOK_FORK, philo->id, philo))
+		{
+			pthread_mutex_unlock(philo->right_fork);
+			pthread_mutex_unlock(philo->left_fork);
 			return (1);
+		}
 	}
 	return (0);
 }

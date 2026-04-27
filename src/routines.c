@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 14:59:58 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/27 16:44:47 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/27 18:52:39 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,8 @@ void	*routine_supervisor(void *data)
 	usleep(1000);
 	while (1)
 	{
+		//print_global(g);
+		// write(1, "hi", 2);
 		pthread_mutex_lock(&(g->access_stop_var_mutex));
 		if (g->stop)
 		{
@@ -93,6 +95,12 @@ void	*routine_supervisor(void *data)
 		while (i < g->nb_of_philo)
 		{
 			pthread_mutex_lock(g->philo[i]->access_last_meal_time);
+			if (g->philo[i]->last_meal_time == 0)
+			{
+				pthread_mutex_unlock(g->philo[i]->access_last_meal_time);
+				i++;
+				continue ;
+			}
 			current_time = getcurrenttime();
 			if (current_time < 0)
 				return (NULL);
