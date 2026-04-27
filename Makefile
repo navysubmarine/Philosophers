@@ -7,7 +7,8 @@ NAME    = philo
 ##INCLUDE_DIRS = 
 
 SOURCES = philo.c src/ft_atoi.c src/check_args.c src/free.c \
-		  src/print.c src/init.c src/routine.c src/helper.c
+		  src/print.c src/init.c src/helper.c \
+		  src/actions.c src/routines.c
 
 OBJETS  = $(SOURCES:.c=.o)
 

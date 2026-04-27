@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/22 14:31:58 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/27 14:45:57 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/27 15:43:28 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	print_messages(int code, unsigned int id, t_philo *philo)
 
 	pthread_mutex_lock(&(philo->g->access_print_messages));
 	current_time = getcurrenttime();
-	if (!current_time)
+	if (current_time < 0)
 		return ;
 	if (!death_has_occurred)
 	{
