@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:17:01 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/27 15:12:00 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/27 16:35:45 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,14 +30,18 @@
 # define BLUE "\e[34m"
 # define PURPLE "\e[35m"
 
+# define THINKING 1
+# define EATING 2
+# define SLEEPING 3
+# define DEAD 4
+# define TOOK_FORK 5
+
 typedef struct s_philo
 {
 	pthread_t		th;
 	unsigned int	id;
 
 	int				times_ive_eaten;
-
-	long			start;
 	long			last_meal_time;
 
 	unsigned int	time_to_die;
@@ -60,6 +64,7 @@ typedef struct s_global
 	pthread_mutex_t	ok_init_mutex;
 	pthread_mutex_t	access_stop_var_mutex;
 	pthread_mutex_t	access_print_messages;
+	pthread_mutex_t	access_philos_done;
 
 	int				nb_of_philo;
 	unsigned int	time_to_die;
@@ -104,5 +109,5 @@ void				free_global(t_global *g);
 /*PRINT*/
 void				print_philo(t_philo *philo);
 void				print_global(t_global *g);
-void				print_messages(int code, unsigned int id, t_philo *philo);
+int					print_messages(int code, unsigned int id, t_philo *philo);
 #endif

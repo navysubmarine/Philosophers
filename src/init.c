@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/23 18:19:42 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/27 15:39:43 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/27 16:36:13 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,8 @@ int	init_g_mutex(t_global *g, pthread_mutex_t **fork_mutex, unsigned int nb_of_p
 	if (pthread_mutex_init(&(g->access_stop_var_mutex), NULL))
 		return (1);
 	if (pthread_mutex_init(&(g->access_print_messages), NULL))
+		return (1);
+	if (pthread_mutex_init(&(g->access_philos_done), NULL))
 		return (1);
 	return (0);
 }

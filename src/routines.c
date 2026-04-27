@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 14:59:58 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/27 15:46:17 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/27 16:44:47 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,6 @@ void	*routine_philo(void *data)
 	pthread_mutex_unlock(philo->access_last_meal_time);
 	if (!philo->last_meal_time)
 		return (NULL);
-	philo->start = philo->last_meal_time;
-	if (philo->g->stop)
-		return (NULL);
 	if (philo->g->max_eat > 0)
 	{
 		while (philo->times_ive_eaten < philo->g->max_eat)
@@ -40,21 +37,14 @@ void	*routine_philo(void *data)
 			philo->times_ive_eaten++;
 			if (philo->times_ive_eaten == philo->g->max_eat)
 			{
-				pthread_mutex_lock(&(philo->g->access_stop_var_mutex));
+				pthread_mutex_lock(&(philo->g->access_philos_done));
 				philo->g->philos_done++;
-				if (philo->g->philos_done == (int)philo->g->nb_of_philo)
-					philo->g->stop = 1;
-				pthread_mutex_unlock(&(philo->g->access_stop_var_mutex));
+				pthread_mutex_unlock(&(philo->g->access_philos_done));
 				return (NULL);
 			}
 			if (my_sleep(philo))
 				return (NULL);
 		}
-		pthread_mutex_lock(&(philo->g->access_stop_var_mutex));
-		philo->g->philos_done++;
-		if (philo->g->philos_done == philo->g->nb_of_philo)
-			philo->g->stop = 1;
-		pthread_mutex_unlock(&(philo->g->access_stop_var_mutex));
 		return (NULL);
 	}
 	else
@@ -116,6 +106,16 @@ void	*routine_supervisor(void *data)
 				return (NULL);
 			}
 			pthread_mutex_unlock(g->philo[i]->access_last_meal_time);
+			pthread_mutex_lock(&(g->access_philos_done));
+			if (g->philos_done == g->nb_of_philo)
+			{
+				pthread_mutex_lock(&(g->access_stop_var_mutex));
+				g->stop = 1;
+				pthread_mutex_unlock(&(g->access_stop_var_mutex));
+				pthread_mutex_unlock(&(g->access_philos_done));
+				return (NULL);
+			}
+			pthread_mutex_unlock(&(g->access_philos_done));
 			i++;
 		}
 		i = 0;

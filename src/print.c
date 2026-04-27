@@ -6,52 +6,55 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/22 14:31:58 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/27 15:43:28 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/27 16:34:08 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../philo.h"
 
-void	print_messages(int code, unsigned int id, t_philo *philo)
+int	print_messages(int code, unsigned int id, t_philo *philo)
 {
 	static int	death_has_occurred = 0;
 	long		current_time;
 
-	pthread_mutex_lock(&(philo->g->access_print_messages));
+	if (philo->g->stop)
+		return (1);
 	current_time = getcurrenttime();
 	if (current_time < 0)
-		return ;
+		return (1);
 	if (!death_has_occurred)
 	{
-		if (code == 1)
+		pthread_mutex_lock(&(philo->g->access_print_messages));
+		if (code == THINKING)
 			printf("%s%ld %d is thinking%s\n", GREEN, current_time
 				- philo->g->simulation_start, id, NC);
-		else if (code == 2)
+		else if (code == EATING)
 			printf("%s%ld %d is eating%s\n", BLUE, current_time
 				- philo->g->simulation_start, id, NC);
-		else if (code == 3)
+		else if (code == SLEEPING)
 			printf("%s%ld %d is sleeping%s\n", PURPLE, current_time
 				- philo->g->simulation_start, id, NC);
-		else if (code == 4)
+		else if (code == DEAD)
 		{
 			printf("%s%ld %d died%s\n", RED, current_time
 				- philo->g->simulation_start, id, NC);
 			death_has_occurred = 1;
 		}
-		else if (code == 5)
+		else if (code == TOOK_FORK)
 		{
 			printf("%s%ld %d has taken a fork%s\n", YELLOW, current_time
 				- philo->g->simulation_start, id, NC);
 		}
+		pthread_mutex_unlock(&(philo->g->access_print_messages));
+		return (0);
 	}
-	pthread_mutex_unlock(&(philo->g->access_print_messages));
+	return (1);
 }
 
 void	print_philo(t_philo *philo)
 {
 	printf("  [Philo %u]\n", philo->id);
 	printf("    id              : %u\n", philo->id);
-	printf("    start			 : %ld\n", philo->start);
 	printf("    last_meal_time  : %ld\n", philo->last_meal_time);
 	printf("    time_to_die     : %u\n", philo->time_to_die);
 	printf("    time_to_eat     : %u\n", philo->time_to_eat);
