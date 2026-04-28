@@ -6,11 +6,11 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/21 15:06:06 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/28 12:08:19 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/28 14:26:53 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../philo.h"
+#include "philo.h"
 
 void	free_philos(t_philo **philo, unsigned int nb)
 {

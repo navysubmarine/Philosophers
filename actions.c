@@ -6,21 +6,21 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 14:59:01 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/28 12:47:09 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/28 14:26:45 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../philo.h"
+#include "philo.h"
 
 int	think(t_philo *philo)
 {
-	//long	think_time;
+	long	think_time;
 
 	if (print_messages(THINKING, philo->id, philo))
 		return (1);
-	// think_time = (long)philo->time_to_eat * 2 - (long)philo->time_to_sleep;
-	// if (think_time > 0)
-	// 	usleep(think_time * 1000);
+	think_time = (long)philo->time_to_eat * 2 - (long)philo->time_to_sleep;
+	if (think_time > 0)
+		usleep(think_time);
 	return (0);
 }
 

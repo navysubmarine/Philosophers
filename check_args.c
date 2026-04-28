@@ -6,11 +6,11 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/21 15:04:19 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/27 14:15:42 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/28 14:26:48 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../philo.h"
+#include "philo.h"
 
 int	is_valid_number(char *arg)
 {

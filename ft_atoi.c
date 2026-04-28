@@ -6,11 +6,11 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/20 18:39:05 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/20 18:57:44 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/28 14:26:56 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../philo.h"
+#include "philo.h"
 
 static int	signe(const char *str)
 {

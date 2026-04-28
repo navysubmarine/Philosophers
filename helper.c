@@ -6,11 +6,11 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/23 18:41:13 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/24 18:26:19 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/28 14:27:00 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../philo.h"
+#include "philo.h"
 
 long	getcurrenttime(void)
 {

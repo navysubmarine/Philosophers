@@ -6,11 +6,11 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/23 18:19:42 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/27 16:36:13 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/28 14:27:03 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../philo.h"
+#include "philo.h"
 
 int	init_philo(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 {
