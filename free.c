@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/21 15:06:06 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/28 14:26:53 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/28 17:47:16 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,27 +35,30 @@ void	free_philos(t_philo **philo, unsigned int nb)
 	free(philo);
 }
 
-void	free_global(t_global *g)
+static void	free_fork_mutexes(t_global *g)
 {
 	int	i;
 
+	i = 0;
+	while (i < g->nb_of_philo)
+	{
+		if (g->fork_mutex[i])
+		{
+			pthread_mutex_destroy(g->fork_mutex[i]);
+			free(g->fork_mutex[i]);
+		}
+		i++;
+	}
+	free(g->fork_mutex);
+	g->fork_mutex = NULL;
+}
+
+void	free_global(t_global *g)
+{
 	if (!g)
 		return ;
 	if (g->fork_mutex)
-	{
-		i = 0;
-		while (i < g->nb_of_philo)
-		{
-			if (g->fork_mutex[i])
-			{
-				pthread_mutex_destroy(g->fork_mutex[i]);
-				free(g->fork_mutex[i]);
-			}
-			i++;
-		}
-		free(g->fork_mutex);
-		g->fork_mutex = NULL;
-	}
+		free_fork_mutexes(g);
 	pthread_mutex_destroy(&g->ok_init_mutex);
 	pthread_mutex_destroy(&g->access_stop_var_mutex);
 	pthread_mutex_destroy(&g->access_print_messages);
