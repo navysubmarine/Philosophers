@@ -7,7 +7,7 @@ NAME    = philo
 
 SOURCES = philo.c ft_atoi.c check_args.c free.c \
 		  print.c init_struct.c init_threads.c helper.c \
-		  actions.c routines.c init_mutex.c
+		  actions.c routine_philo.c routine_supervisor.c init_mutex.c
 
 OBJETS  = $(SOURCES:.c=.o)
 
