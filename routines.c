@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 14:59:58 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/28 17:58:07 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/28 18:29:03 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ void	*routine_supervisor(void *data)
 				pthread_mutex_lock(&(g->access_stop_var_mutex));
 				g->stop = 1;
 				pthread_mutex_unlock(&(g->access_stop_var_mutex));
-				print_messages(4, g->philo[i]->id, g->philo[i]);
+				print_messages(DEAD, g->philo[i]->id, g->philo[i]);
 				return (NULL);
 			}
 			pthread_mutex_unlock(g->philo[i]->access_last_meal_time);
