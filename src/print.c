@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/22 14:31:58 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/27 19:01:36 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/28 11:51:34 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,11 @@ int	print_messages(int code, unsigned int id, t_philo *philo)
 	if (current_time < 0)
 		return (1);
 	pthread_mutex_lock(&(philo->g->access_print_messages));
+	pthread_mutex_lock(&(philo->g->access_stop_var_mutex));
 	if (philo->g->stop && code != DEAD)
 	{
 		pthread_mutex_unlock(&(philo->g->access_print_messages));
+		pthread_mutex_unlock(&(philo->g->access_stop_var_mutex));
 		return (1);
 	}
 	if (code == THINKING)
@@ -40,6 +42,7 @@ int	print_messages(int code, unsigned int id, t_philo *philo)
 			- philo->g->simulation_start, id, NC);
 		philo->g->stop = 1;
 		pthread_mutex_unlock(&(philo->g->access_print_messages));
+		pthread_mutex_unlock(&(philo->g->access_stop_var_mutex));
 		return (1);
 	}
 	else if (code == TOOK_FORK)
@@ -48,6 +51,7 @@ int	print_messages(int code, unsigned int id, t_philo *philo)
 			- philo->g->simulation_start, id, NC);
 	}
 	pthread_mutex_unlock(&(philo->g->access_print_messages));
+	pthread_mutex_unlock(&(philo->g->access_stop_var_mutex));
 	return (0);
 }
 

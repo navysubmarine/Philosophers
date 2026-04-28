@@ -1,7 +1,7 @@
 {
-  "C_Cpp.default.cppIntellisenseEngine": "disabled",
-  "C_Cpp.intelliSenseEngine": "tag-parser",
-  "C_Cpp.intelliSenseEngineFallback": "disabled",
+  "C_Cpp.default.cppIntellisenseEngine": "default",
+  "C_Cpp.intelliSenseEngine": "default",
+  "C_Cpp.intelliSenseEngineFallback": "enabled",
   "[c]": {
     "editor.defaultFormatter": "keyhr.42-c-format",
     "editor.formatOnSave": true,
@@ -23,6 +23,6 @@
     "strings": false
   },
   "terminal.integrated.env.linux": {
-    "PATH": "/home/marthoma/.local/bin:${env:PATH}"
+    "PATH": "/var/data/python/bin:/usr/bin:${env:PATH}"
   }
 }
