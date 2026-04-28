@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init.c                                             :+:      :+:    :+:   */
+/*   init_struct.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/23 18:19:42 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/28 14:27:03 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/28 17:43:16 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	init_philo(t_global *g, t_philo **philo, unsigned int nb_of_philo)
+int	init_philo_struct(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 {
 	unsigned int	i;
 
@@ -46,7 +46,8 @@ int	init_philo(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 	return (0);
 }
 
-int	init_g_mutex(t_global *g, pthread_mutex_t **fork_mutex, unsigned int nb_of_philo)
+int	init_g_mutex(t_global *g, pthread_mutex_t **fork_mutex,
+	unsigned int nb_of_philo)
 {
 	unsigned int	i;
 
@@ -96,30 +97,5 @@ int	init_g_struct(t_global *g, int argc, char **argv)
 	memset(g->fork_mutex, 0, sizeof(pthread_mutex_t *) * g->nb_of_philo);
 	if (init_g_mutex(g, g->fork_mutex, g->nb_of_philo))
 		return (1);
-	return (0);
-}
-
-int	init(t_global *g, int argc, char **argv)
-{
-	if (init_g_struct(g, argc, argv))
-	{
-		free_global(g);
-		return (1);
-	}
-	if (init_philo(g, g->philo, g->nb_of_philo))
-	{
-		free_global(g);
-		return (1);
-	}
-	if (init_supervisor(g))
-	{
-		free_global(g);
-		return (1);
-	}
-	if (init_threads(g, g->philo, g->nb_of_philo))
-	{
-		free_global(g);
-		return (1);
-	}
 	return (0);
 }

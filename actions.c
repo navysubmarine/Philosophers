@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 14:59:01 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/28 14:26:45 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/28 17:45:02 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,51 +14,37 @@
 
 int	think(t_philo *philo)
 {
-	long	think_time;
-
 	if (print_messages(THINKING, philo->id, philo))
 		return (1);
-	think_time = (long)philo->time_to_eat * 2 - (long)philo->time_to_sleep;
-	if (think_time > 0)
-		usleep(think_time);
+	usleep(200);
+	return (0);
+}
+
+static int	lock_fork(pthread_mutex_t *first, pthread_mutex_t *second,
+	t_philo *philo)
+{
+	pthread_mutex_lock(first);
+	if (print_messages(TOOK_FORK, philo->id, philo))
+	{
+		pthread_mutex_unlock(first);
+		return (1);
+	}
+	pthread_mutex_lock(second);
+	if (print_messages(TOOK_FORK, philo->id, philo))
+	{
+		pthread_mutex_unlock(first);
+		pthread_mutex_unlock(second);
+		return (1);
+	}
 	return (0);
 }
 
 int	take_forks(t_philo *philo)
 {
 	if (philo->id % 2)
-	{
-		pthread_mutex_lock(philo->right_fork);
-		if (print_messages(TOOK_FORK, philo->id, philo))
-		{
-			pthread_mutex_unlock(philo->right_fork);
-			return (1);
-		}
-		pthread_mutex_lock(philo->left_fork);
-		if (print_messages(TOOK_FORK, philo->id, philo))
-		{
-			pthread_mutex_unlock(philo->right_fork);
-			pthread_mutex_unlock(philo->left_fork);
-			return (1);
-		}
-	}
+		return (lock_fork(philo->right_fork, philo->left_fork, philo));
 	else
-	{
-		pthread_mutex_lock(philo->left_fork);
-		if (print_messages(TOOK_FORK, philo->id, philo))
-		{
-			pthread_mutex_unlock(philo->left_fork);
-			return (1);
-		}
-		pthread_mutex_lock(philo->right_fork);
-		if (print_messages(TOOK_FORK, philo->id, philo))
-		{
-			pthread_mutex_unlock(philo->right_fork);
-			pthread_mutex_unlock(philo->left_fork);
-			return (1);
-		}
-	}
-	return (0);
+		return (lock_fork(philo->left_fork, philo->right_fork, philo));
 }
 
 int	eat(t_philo *philo)

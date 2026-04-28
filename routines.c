@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 14:59:58 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/28 14:27:21 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/28 15:20:51 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,6 @@ void	*routine_supervisor(void *data)
 	usleep(1000);
 	while (1)
 	{
-		//print_global(g);
-		// write(1, "hi", 2);
 		pthread_mutex_lock(&(g->access_stop_var_mutex));
 		if (g->stop)
 		{

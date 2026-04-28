@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:17:01 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/27 16:35:45 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/28 17:39:45 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@
 # define THINKING 1
 # define EATING 2
 # define SLEEPING 3
-# define DEAD 4
-# define TOOK_FORK 5
+# define TOOK_FORK 4
+# define DEAD 5
 
 typedef struct s_philo
 {
@@ -90,10 +90,10 @@ int					init(t_global *g, int argc, char **argv);
 int					init_g_struct(t_global *g, int argc, char **argv);
 int					init_g_mutex(t_global *g, pthread_mutex_t **mutex,
 						unsigned int nb_of_philo);
-int					init_philo(t_global *g, t_philo **philo,
+int					init_philo_struct(t_global *g, t_philo **philo,
 						unsigned int nb_of_philo);
-int					init_supervisor(t_global *g);
-int					init_threads(t_global *g, t_philo **philo,
+int					init_supervisor_thread(t_global *g);
+int					init_philo_threads(t_global *g, t_philo **philo,
 						unsigned int nb_of_philo);
 /*ROUTINES*/
 void				*routine_philo(void *data);
