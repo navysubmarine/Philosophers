@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 14:59:58 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/28 11:50:48 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/28 12:35:55 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ void	*routine_philo(void *data)
 	philo = (t_philo *)data;
 	pthread_mutex_lock(&(philo->g->ok_init_mutex));
 	pthread_mutex_unlock(&(philo->g->ok_init_mutex));
+	if (philo->id % 2 == 0)
+		usleep(philo->time_to_eat * 1000);
 	pthread_mutex_lock(philo->access_last_meal_time);
 	philo->last_meal_time = getcurrenttime();
 	if (philo->last_meal_time < 0)
@@ -64,11 +66,13 @@ void	*routine_solo_philo(void *data)
 	philo = (t_philo *)data;
 	pthread_mutex_lock(&(philo->g->ok_init_mutex));
 	pthread_mutex_unlock(&(philo->g->ok_init_mutex));
-	think(philo);
+	if (print_messages(THINKING, philo->id, philo))
+		return (NULL);
 	current_time = getcurrenttime();
 	if (current_time < 0)
 		return (NULL);
-	print_messages(4, philo->id, philo);
+	usleep(philo->time_to_die * 1000);
+	print_messages(DEAD, philo->id, philo);
 	return (NULL);
 }
 
@@ -114,19 +118,19 @@ void	*routine_supervisor(void *data)
 				return (NULL);
 			}
 			pthread_mutex_unlock(g->philo[i]->access_last_meal_time);
-			pthread_mutex_lock(&(g->access_philos_done));
-			if (g->philos_done == g->nb_of_philo)
-			{
-				pthread_mutex_lock(&(g->access_stop_var_mutex));
-				g->stop = 1;
-				pthread_mutex_unlock(&(g->access_stop_var_mutex));
-				pthread_mutex_unlock(&(g->access_philos_done));
-				return (NULL);
-			}
-			pthread_mutex_unlock(&(g->access_philos_done));
 			i++;
 		}
 		i = 0;
+		pthread_mutex_lock(&(g->access_philos_done));
+		if (g->philos_done == g->nb_of_philo)
+		{
+			pthread_mutex_lock(&(g->access_stop_var_mutex));
+			g->stop = 1;
+			pthread_mutex_unlock(&(g->access_stop_var_mutex));
+			pthread_mutex_unlock(&(g->access_philos_done));
+			return (NULL);
+		}
+		pthread_mutex_unlock(&(g->access_philos_done));
 	}
 	return (NULL);
 }

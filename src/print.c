@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/22 14:31:58 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/28 11:51:34 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/28 12:02:53 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,17 +16,17 @@ int	print_messages(int code, unsigned int id, t_philo *philo)
 {
 	long	current_time;
 
+	pthread_mutex_lock(&(philo->g->access_stop_var_mutex));
+	if (philo->g->stop && code != DEAD)
+	{
+		pthread_mutex_unlock(&(philo->g->access_stop_var_mutex));
+		return (1);
+	}
+	pthread_mutex_unlock(&(philo->g->access_stop_var_mutex));
 	current_time = getcurrenttime();
 	if (current_time < 0)
 		return (1);
 	pthread_mutex_lock(&(philo->g->access_print_messages));
-	pthread_mutex_lock(&(philo->g->access_stop_var_mutex));
-	if (philo->g->stop && code != DEAD)
-	{
-		pthread_mutex_unlock(&(philo->g->access_print_messages));
-		pthread_mutex_unlock(&(philo->g->access_stop_var_mutex));
-		return (1);
-	}
 	if (code == THINKING)
 		printf("%s%ld %d is thinking%s\n", GREEN, current_time
 			- philo->g->simulation_start, id, NC);
@@ -40,9 +40,10 @@ int	print_messages(int code, unsigned int id, t_philo *philo)
 	{
 		printf("%s%ld %d died%s\n", RED, current_time
 			- philo->g->simulation_start, id, NC);
+		pthread_mutex_lock(&(philo->g->access_stop_var_mutex));
 		philo->g->stop = 1;
-		pthread_mutex_unlock(&(philo->g->access_print_messages));
 		pthread_mutex_unlock(&(philo->g->access_stop_var_mutex));
+		pthread_mutex_unlock(&(philo->g->access_print_messages));
 		return (1);
 	}
 	else if (code == TOOK_FORK)
@@ -51,7 +52,6 @@ int	print_messages(int code, unsigned int id, t_philo *philo)
 			- philo->g->simulation_start, id, NC);
 	}
 	pthread_mutex_unlock(&(philo->g->access_print_messages));
-	pthread_mutex_unlock(&(philo->g->access_stop_var_mutex));
 	return (0);
 }
 

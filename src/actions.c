@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 14:59:01 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/28 11:42:34 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/28 12:47:09 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,13 @@
 
 int	think(t_philo *philo)
 {
+	//long	think_time;
+
 	if (print_messages(THINKING, philo->id, philo))
 		return (1);
-	//usleep(100);
+	// think_time = (long)philo->time_to_eat * 2 - (long)philo->time_to_sleep;
+	// if (think_time > 0)
+	// 	usleep(think_time * 1000);
 	return (0);
 }
 
@@ -59,7 +63,7 @@ int	take_forks(t_philo *philo)
 
 int	eat(t_philo *philo)
 {
-	if (take_forks(philo) || print_messages(EATING, philo->id, philo))
+	if (take_forks(philo))
 	{
 		return (1);
 	}
@@ -72,16 +76,15 @@ int	eat(t_philo *philo)
 		pthread_mutex_unlock(philo->left_fork);
 		return (1);
 	}
+	if (print_messages(EATING, philo->id, philo))
+	{
+		pthread_mutex_unlock(philo->right_fork);
+		pthread_mutex_unlock(philo->left_fork);
+		return (1);
+	}
 	usleep(philo->time_to_eat * 1000);
 	pthread_mutex_unlock(philo->right_fork);
 	pthread_mutex_unlock(philo->left_fork);
-	pthread_mutex_lock(&(philo->g->access_stop_var_mutex));
-	if (philo->g->stop)
-	{
-		pthread_mutex_unlock(&(philo->g->access_stop_var_mutex));
-		return (1);
-	}
-	pthread_mutex_unlock(&(philo->g->access_stop_var_mutex));
 	return (0);
 }
 
@@ -95,7 +98,7 @@ int	my_sleep(t_philo *philo)
 	}
 	pthread_mutex_unlock(&(philo->g->access_stop_var_mutex));
 	print_messages(SLEEPING, philo->id, philo);
-	usleep(philo->time_to_sleep / 1000);
+	usleep(philo->time_to_sleep * 1000);
 	pthread_mutex_lock(&(philo->g->access_stop_var_mutex));
 	if (philo->g->stop)
 	{
