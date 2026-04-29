@@ -6,13 +6,13 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 19:03:35 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/29 12:29:39 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/29 18:09:42 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static int	should_stop(t_global *g)
+int	should_stop_simulation(t_global *g)
 {
 	pthread_mutex_lock(&(g->access_stop_var_mutex));
 	if (g->stop)
@@ -34,7 +34,7 @@ static int	check_philo_death(t_global *g, int i)
 	current_time = getcurrenttime();
 	if (current_time < 0)
 		return (pthread_mutex_unlock(g->philo[i]->access_last_meal_time), -1);
-	if ((current_time - g->philo[i]->last_meal_time) > g->time_to_die)
+	if ((current_time - g->philo[i]->last_meal_time) >= g->time_to_die)
 	{
 		pthread_mutex_unlock(g->philo[i]->access_last_meal_time);
 		print_messages(DEAD, g->philo[i]->id, g->philo[i]);
@@ -70,7 +70,7 @@ void	*routine_supervisor(void *data)
 	while (1)
 	{
 		usleep(1000);
-		if (should_stop(g))
+		if (should_stop_simulation(g))
 			return (NULL);
 		i = 0;
 		while (i < g->nb_of_philo)

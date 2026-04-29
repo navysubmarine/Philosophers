@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/22 14:31:58 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/29 15:00:12 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/29 18:57:46 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,10 @@ static int	should_stop(t_philo *philo, int code)
 static void	print_line(int code, unsigned int id, t_philo *philo)
 {
 	long	t;
-	long ts;
+	long	ts;
 
+	// if (should_stop(philo, code))
+	// 	return ;
 	ts = getcurrenttime();
 	if (ts < 0)
 		return ;

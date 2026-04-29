@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 14:59:01 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/29 14:55:12 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/29 19:08:20 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	think(t_philo *philo)
 }
 
 static int	lock_fork(pthread_mutex_t *first, pthread_mutex_t *second,
-	t_philo *philo)
+		t_philo *philo)
 {
 	pthread_mutex_lock(first);
 	if (print_messages(TOOK_FORK, philo->id, philo))
@@ -55,12 +55,37 @@ int	take_forks(t_philo *philo)
 	}
 }
 
+// static int	am_i_dead(t_philo *philo)
+// {
+// 	pthread_mutex_lock(philo->access_last_meal_time);
+// 	philo->last_meal_time = getcurrenttime();
+// 	if (philo->last_meal_time < 0)
+// 	{
+// 		pthread_mutex_unlock(philo->access_last_meal_time);
+// 		return (1);
+// 	}
+// 	if ((philo->last_meal_time
+// 			- philo->g->simulation_start) > philo->time_to_die)
+// 	{
+// 		pthread_mutex_unlock(philo->access_last_meal_time);
+// 		return (1);
+// 	}
+// 	pthread_mutex_unlock(philo->access_last_meal_time);
+// 	return (0);
+// }
+
 int	eat(t_philo *philo)
 {
 	if (take_forks(philo))
 	{
 		return (1);
 	}
+	// if (am_i_dead(philo))
+	// {
+	// 	pthread_mutex_unlock(philo->right_fork);
+	// 	pthread_mutex_unlock(philo->left_fork);
+	// 	return (1);
+	// }
 	pthread_mutex_lock(philo->access_last_meal_time);
 	philo->last_meal_time = getcurrenttime();
 	pthread_mutex_unlock(philo->access_last_meal_time);
@@ -70,6 +95,7 @@ int	eat(t_philo *philo)
 		pthread_mutex_unlock(philo->left_fork);
 		return (1);
 	}
+	pthread_mutex_unlock(philo->access_last_meal_time);
 	if (print_messages(EATING, philo->id, philo))
 	{
 		pthread_mutex_unlock(philo->right_fork);
