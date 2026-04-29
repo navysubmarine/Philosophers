@@ -1,12 +1,9 @@
 CC      = cc 
-CFLAGS  = -Wall -Wextra -Werror -g3 -pthread -fsanitize=thread,undefined 
+CFLAGS  = -Wall -Wextra -Werror -g3 -pthread #-fsanitize=thread 
 NAME    = philo
 
-##SRC_DIR = src
-##INCLUDE_DIRS = 
-
-SOURCES = philo.c ft_atoi.c check_args.c free.c \
-		  print.c init_struct.c init_threads.c helper.c \
+SOURCES = philo.c  init_struct.c check_args.c free.c \
+		  print.c init_threads.c helper.c \
 		  actions.c routine_philo.c routine_supervisor.c init_mutex.c
 
 OBJETS  = $(SOURCES:.c=.o)
@@ -32,4 +29,3 @@ fclean: clean
 	rm -f $(NAME)
 
 re: fclean all
-

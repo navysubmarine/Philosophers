@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 14:59:58 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/28 19:04:00 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/29 12:35:40 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,10 @@ static int	init_philo_routine(t_philo *philo)
 	pthread_mutex_lock(philo->access_last_meal_time);
 	philo->last_meal_time = getcurrenttime();
 	if (philo->last_meal_time < 0)
-		return (pthread_mutex_unlock(philo->access_last_meal_time), 1);
+	{
+		pthread_mutex_unlock(philo->access_last_meal_time);
+		return (1);
+	}
 	pthread_mutex_unlock(philo->access_last_meal_time);
 	if (!philo->last_meal_time)
 		return (1);
@@ -56,7 +59,10 @@ void	*routine_philo(void *data)
 	if (init_philo_routine(philo))
 		return (NULL);
 	if (philo->g->max_eat > 0)
-		return (routine_limited(philo));
+	{
+		routine_limited(philo);
+		return (NULL);
+	}
 	while (1)
 	{
 		if (think(philo) || eat(philo) || my_sleep(philo))

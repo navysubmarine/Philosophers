@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 14:59:01 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/28 18:12:03 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/29 12:37:52 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,17 @@ static int	lock_fork(pthread_mutex_t *first, pthread_mutex_t *second,
 
 int	take_forks(t_philo *philo)
 {
+	int	ret;
 	if (philo->id % 2)
-		return (lock_fork(philo->right_fork, philo->left_fork, philo));
+	{
+		ret = lock_fork(philo->right_fork, philo->left_fork, philo);
+		return (ret);
+	}
 	else
-		return (lock_fork(philo->left_fork, philo->right_fork, philo));
+	{
+		ret = lock_fork(philo->left_fork, philo->right_fork, philo);
+		return (ret);
+	}
 }
 
 int	eat(t_philo *philo)
