@@ -24,5 +24,7 @@
   },
   "terminal.integrated.env.linux": {
     "PATH": "/var/data/python/bin:/usr/bin:${env:PATH}"
-  }
+  },
+  "todo-tree.tree.showBadges": true,
+  "todo-tree.tree.showCountsInTree": false
 }

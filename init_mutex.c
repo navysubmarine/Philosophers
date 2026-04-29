@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 18:46:59 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/29 19:53:54 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/29 22:35:45 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ int	init_g_mutex(t_global *g, pthread_mutex_t **fork_mutex,
 
 int	init_meal_mutex(t_philo *philo)
 {
-	/*TODO:remove malloc*/
 	philo->access_last_meal_time = malloc(sizeof(pthread_mutex_t));
 	if (!philo->access_last_meal_time)
 		return (1);

@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 14:59:58 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/29 21:30:41 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/29 22:47:50 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static void	*routine_limited(t_philo *philo)
 {
 	/*TODO:continue to do their things even when they have eaten enough
 	times_ive_eaten should be responsibility of eat*/
-	while (philo->times_ive_eaten < philo->g->max_eat)
+	while (1)
 	{
 		if (think(philo) || eat(philo))
 			return (NULL);
@@ -43,7 +43,7 @@ static void	*routine_limited(t_philo *philo)
 		if (my_sleep(philo))
 			return (NULL);
 	}
-	return (NULL);
+	//return (NULL);
 }
 
 void	*routine_philo(void *data)
@@ -53,16 +53,16 @@ void	*routine_philo(void *data)
 	philo = (t_philo *)data;
 	if (init_philo_routine(philo))
 		return (NULL);
-	if (philo->g->max_eat > 0)
-	{
-		routine_limited(philo);
-		return (NULL);
-	}
-	while (1)
-	{
-		if (think(philo) || eat(philo) || my_sleep(philo))
-			return (NULL);
-	}
+	//if (philo->g->max_eat > 0)
+	//{
+	routine_limited(philo);
+	//	return (NULL);
+	//}
+	// while (1)
+	// {
+	// 	if (think(philo) || eat(philo) || my_sleep(philo))
+	// 		return (NULL);
+	// }
 	return (NULL);
 }
 
