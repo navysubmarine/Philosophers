@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/22 14:31:58 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/28 18:09:43 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/29 15:00:12 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,14 @@ static int	should_stop(t_philo *philo, int code)
 	return (0);
 }
 
-static void	print_line(int code, unsigned int id, long ts, t_philo *philo)
+static void	print_line(int code, unsigned int id, t_philo *philo)
 {
 	long	t;
+	long ts;
 
+	ts = getcurrenttime();
+	if (ts < 0)
+		return ;
 	t = ts - philo->g->simulation_start;
 	if (code == THINKING)
 		printf("%s%ld %d is thinking%s\n", GREEN, t, id, NC);
@@ -45,12 +49,15 @@ int	print_messages(int code, unsigned int id, t_philo *philo)
 
 	if (should_stop(philo, code))
 		return (1);
-	current_time = getcurrenttime();
-	if (current_time < 0)
-		return (1);
 	pthread_mutex_lock(&(philo->g->access_print_messages));
 	if (code == DEAD)
 	{
+		current_time = getcurrenttime();
+		if (current_time < 0)
+		{
+			pthread_mutex_unlock(&(philo->g->access_print_messages));
+			return (1);
+		}
 		printf("%s%ld %d died%s\n", RED,
 			current_time - philo->g->simulation_start, id, NC);
 		pthread_mutex_lock(&(philo->g->access_stop_var_mutex));
@@ -59,7 +66,7 @@ int	print_messages(int code, unsigned int id, t_philo *philo)
 		pthread_mutex_unlock(&(philo->g->access_print_messages));
 		return (1);
 	}
-	print_line(code, id, current_time, philo);
+	print_line(code, id, philo);
 	pthread_mutex_unlock(&(philo->g->access_print_messages));
 	return (0);
 }
