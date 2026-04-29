@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 14:59:01 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/29 19:08:20 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/29 21:13:54 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	think(t_philo *philo)
 {
 	if (print_messages(THINKING, philo->id, philo))
 		return (1);
-	usleep(200);
+	usleep(500);
 	return (0);
 }
 
@@ -95,13 +95,14 @@ int	eat(t_philo *philo)
 		pthread_mutex_unlock(philo->left_fork);
 		return (1);
 	}
-	pthread_mutex_unlock(philo->access_last_meal_time);
+	//pthread_mutex_unlock(philo->access_last_meal_time);
 	if (print_messages(EATING, philo->id, philo))
 	{
 		pthread_mutex_unlock(philo->right_fork);
 		pthread_mutex_unlock(philo->left_fork);
 		return (1);
 	}
+	/*TODO: eat snacks*/
 	usleep(philo->time_to_eat * 1000);
 	pthread_mutex_unlock(philo->right_fork);
 	pthread_mutex_unlock(philo->left_fork);
@@ -118,6 +119,8 @@ int	my_sleep(t_philo *philo)
 	}
 	pthread_mutex_unlock(&(philo->g->access_stop_var_mutex));
 	print_messages(SLEEPING, philo->id, philo);
+	/*TODO:take small naps and check stop between 
+	until you reach time_to_sleep * 1000*/
 	usleep(philo->time_to_sleep * 1000);
 	pthread_mutex_lock(&(philo->g->access_stop_var_mutex));
 	if (philo->g->stop)

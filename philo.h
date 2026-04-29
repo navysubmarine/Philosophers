@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:17:01 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/29 17:37:16 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/29 20:34:53 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ typedef struct s_global
 int					ft_atoi(const char *nptr);
 long				getcurrenttime(void);
 int					should_stop_simulation(t_global *g);
+long				timestamp_gen(long start);
 /*CHECK ARGS*/
 int					is_valid_number(char *arg);
 int					check_arg(int argc, char **argv);

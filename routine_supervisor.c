@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 19:03:35 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/29 18:09:42 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/29 20:07:14 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,11 @@ static int	check_philo_death(t_global *g, int i)
 	long	current_time;
 
 	pthread_mutex_lock(g->philo[i]->access_last_meal_time);
-	if (g->philo[i]->last_meal_time == 0)
-		return (pthread_mutex_unlock(g->philo[i]->access_last_meal_time), 0);
+	/*TODO: check this strange condition*/
+	//if (g->philo[i]->last_meal_time == 0)
+	//	return (pthread_mutex_unlock(g->philo[i]->access_last_meal_time), 0);
 	current_time = getcurrenttime();
+	/*TODO: this information does not propagate*/
 	if (current_time < 0)
 		return (pthread_mutex_unlock(g->philo[i]->access_last_meal_time), -1);
 	if ((current_time - g->philo[i]->last_meal_time) >= g->time_to_die)
@@ -65,6 +67,7 @@ void	*routine_supervisor(void *data)
 	t_global	*g;
 
 	g = (t_global *)data;
+	/*TODO: check order ok_init useless here*/
 	pthread_mutex_lock(&(g->ok_init_mutex));
 	pthread_mutex_unlock(&(g->ok_init_mutex));
 	while (1)

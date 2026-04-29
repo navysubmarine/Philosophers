@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/23 18:41:13 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/29 12:31:24 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/04/29 20:36:23 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,17 @@ long	getcurrenttime(void)
 	long			value;
 
 	if (gettimeofday(&time, NULL))
-		return (-1);
+		return (-1); // TODO: make sure simulation stops when this
 	else
 	{
 		value = (long)time.tv_sec * 1000 + (long)time.tv_usec / 1000;
 		return (value);
 	}
+}
+
+long	timestamp_gen(long start)
+{
+	return (getcurrenttime() - start);
 }
 
 static int	signe(const char *str)
