@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/22 14:31:58 by marthoma          #+#    #+#             */
-/*   Updated: 2026/05/01 11:21:51 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/05/01 11:35:24 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,17 +36,14 @@ static void	print_line(int code, unsigned int id, long ts)
 		printf("%s%ld %d has taken a fork%s\n", YELLOW, ts, id, NC);
 }
 
-int	print_messages(int code, unsigned int id, t_philo *philo)
+int	print_messages(int code, unsigned int id, t_philo *philo, long ts)
 {
-	long	ts;
-
 	pthread_mutex_lock(&(philo->g->access_print_messages));
 	if (should_stop(philo, code))
 	{
 		pthread_mutex_unlock(&(philo->g->access_print_messages));
 		return (1);
 	}
-	ts = timestamp_gen(philo->g->simulation_start);
 	if (ts < 0)
 	{
 		return (pthread_mutex_unlock(&(philo->g->access_print_messages)), 1);

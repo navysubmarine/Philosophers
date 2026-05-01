@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 14:59:58 by marthoma          #+#    #+#             */
-/*   Updated: 2026/05/01 11:20:15 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/05/01 11:48:26 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,16 +58,19 @@ void	*routine_solo_philo(void *data)
 {
 	t_philo	*philo;
 	long	current_time;
+	long	ts;
 
 	philo = (t_philo *)data;
 	pthread_mutex_lock(&(philo->g->ok_init_mutex));
 	pthread_mutex_unlock(&(philo->g->ok_init_mutex));
-	if (print_messages(THINKING, philo->id, philo))
+	ts = timestamp_gen(philo->g->simulation_start);
+	if (print_messages(THINKING, philo->id, philo, ts))
 		return (NULL);
 	current_time = getcurrenttime();
 	if (current_time < 0)
 		return (NULL);
 	usleep(philo->time_to_die * 1000);
-	print_messages(DEAD, philo->id, philo);
+	ts = timestamp_gen((philo->g->simulation_start));
+	print_messages(DEAD, philo->id, philo, ts);
 	return (NULL);
 }

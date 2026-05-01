@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:17:01 by marthoma          #+#    #+#             */
-/*   Updated: 2026/05/01 11:14:52 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/05/01 11:40:50 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,5 +112,5 @@ void				free_global(t_global *g);
 /*PRINT*/
 void				print_philo(t_philo *philo);
 void				print_global(t_global *g);
-int					print_messages(int code, unsigned int id, t_philo *philo);
+int					print_messages(int code, unsigned int id, t_philo *philo, long ts);
 #endif

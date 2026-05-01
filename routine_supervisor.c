@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 19:03:35 by marthoma          #+#    #+#             */
-/*   Updated: 2026/05/01 11:20:22 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/05/01 11:48:04 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ int	should_stop_simulation(t_global *g)
 static int	check_philo_death(t_global *g, int i)
 {
 	long	current_time;
+	long	ts;
 
 	pthread_mutex_lock(g->philo[i]->access_last_meal_time);
 	if (g->philo[i]->last_meal_time == 0)
@@ -36,8 +37,9 @@ static int	check_philo_death(t_global *g, int i)
 		return (pthread_mutex_unlock(g->philo[i]->access_last_meal_time), -1);
 	if ((current_time - g->philo[i]->last_meal_time) >= g->time_to_die)
 	{
+		ts = timestamp_gen(g->simulation_start);
 		pthread_mutex_unlock(g->philo[i]->access_last_meal_time);
-		print_messages(DEAD, g->philo[i]->id, g->philo[i]);
+		print_messages(DEAD, g->philo[i]->id, g->philo[i], ts);
 		return (1);
 	}
 	pthread_mutex_unlock(g->philo[i]->access_last_meal_time);
