@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 19:03:35 by marthoma          #+#    #+#             */
-/*   Updated: 2026/05/01 10:51:43 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/05/01 11:06:14 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,8 @@ static int	check_philo_death(t_global *g, int i)
 	long	current_time;
 
 	pthread_mutex_lock(g->philo[i]->access_last_meal_time);
-	/*TODO: check this strange condition*/
-	//if (g->philo[i]->last_meal_time == 0)
-	//	return (pthread_mutex_unlock(g->philo[i]->access_last_meal_time), 0);
+	if (g->philo[i]->last_meal_time == 0)
+		return (pthread_mutex_unlock(g->philo[i]->access_last_meal_time), 0);
 	current_time = getcurrenttime();
 	/*TODO: this information does not propagate*/
 	if (current_time < 0)
