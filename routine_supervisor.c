@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 19:03:35 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/29 20:07:14 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/05/01 10:51:43 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,6 @@ void	*routine_supervisor(void *data)
 	t_global	*g;
 
 	g = (t_global *)data;
-	/*TODO: check order ok_init useless here*/
 	pthread_mutex_lock(&(g->ok_init_mutex));
 	pthread_mutex_unlock(&(g->ok_init_mutex));
 	while (1)

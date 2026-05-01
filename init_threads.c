@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/28 15:36:55 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/28 15:37:50 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/05/01 10:51:12 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,9 +68,11 @@ static int	join_threads(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 	return (0);
 }
 
-int	init_philo_threads(t_global *g, t_philo **philo, unsigned int nb_of_philo)
+int	init_threads(t_global *g, t_philo **philo, unsigned int nb_of_philo)
 {
 	pthread_mutex_lock(&(g->ok_init_mutex));
+	if (init_supervisor_thread(g))
+		return (1);
 	if (nb_of_philo == 1)
 	{
 		if (init_solo_philo_thread(g, philo))

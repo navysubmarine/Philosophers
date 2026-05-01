@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:17:01 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/29 20:34:53 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/05/01 10:54:43 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,8 +96,7 @@ int					init_meal_mutex(t_philo *philo);
 int					init_philo_struct(t_global *g, t_philo **philo,
 						unsigned int nb_of_philo);
 int					init_supervisor_thread(t_global *g);
-int					init_philo_threads(t_global *g, t_philo **philo,
-						unsigned int nb_of_philo);
+int					init_threads(t_global *g, t_philo **philo, unsigned int nb_of_philo);
 /*ROUTINES*/
 void				*routine_philo(void *data);
 void				*routine_solo_philo(void *data);

@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:19:29 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/28 15:39:36 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/05/01 10:50:44 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,7 @@ int	init(t_global *g, int argc, char **argv)
 		free_global(g);
 		return (1);
 	}
-	if (init_supervisor_thread(g))
-	{
-		free_global(g);
-		return (1);
-	}
-	if (init_philo_threads(g, g->philo, g->nb_of_philo))
+	if (init_threads(g, g->philo, g->nb_of_philo))
 	{
 		free_global(g);
 		return (1);
