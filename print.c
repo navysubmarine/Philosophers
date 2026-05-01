@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/22 14:31:58 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/29 21:53:48 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/05/01 11:21:51 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ static int	should_stop(t_philo *philo, int code)
 		pthread_mutex_unlock(&(philo->g->access_stop_var_mutex));
 		return (1);
 	}
-	/*TODO:whom to give the responsibility of stop*/
 	pthread_mutex_unlock(&(philo->g->access_stop_var_mutex));
 	return (0);
 }
@@ -40,7 +39,7 @@ static void	print_line(int code, unsigned int id, long ts)
 int	print_messages(int code, unsigned int id, t_philo *philo)
 {
 	long	ts;
-	/*TODO:make less cracra*/
+
 	pthread_mutex_lock(&(philo->g->access_print_messages));
 	if (should_stop(philo, code))
 	{
@@ -50,8 +49,7 @@ int	print_messages(int code, unsigned int id, t_philo *philo)
 	ts = timestamp_gen(philo->g->simulation_start);
 	if (ts < 0)
 	{
-		pthread_mutex_unlock(&(philo->g->access_print_messages));
-		return (1);
+		return (pthread_mutex_unlock(&(philo->g->access_print_messages)), 1);
 	}
 	if (code == DEAD)
 	{

@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 14:59:01 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/29 22:34:37 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/05/01 11:19:35 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,6 @@ int	eat(t_philo *philo)
 		pthread_mutex_unlock(philo->left_fork);
 		return (1);
 	}
-	/*TODO: eat snacks*/
 	usleep(philo->time_to_eat * 1000);
 	pthread_mutex_unlock(philo->right_fork);
 	pthread_mutex_unlock(philo->left_fork);
@@ -93,8 +92,6 @@ int	my_sleep(t_philo *philo)
 	}
 	pthread_mutex_unlock(&(philo->g->access_stop_var_mutex));
 	print_messages(SLEEPING, philo->id, philo);
-	/*TODO:take small naps and check stop between 
-	until you reach time_to_sleep * 1000*/
 	usleep(philo->time_to_sleep * 1000);
 	pthread_mutex_lock(&(philo->g->access_stop_var_mutex));
 	if (philo->g->stop)
