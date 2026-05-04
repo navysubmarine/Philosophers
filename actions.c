@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 14:59:01 by marthoma          #+#    #+#             */
-/*   Updated: 2026/05/01 11:41:15 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/05/04 14:32:57 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	think(t_philo *philo)
 {
-	long ts;
+	long	ts;
 
 	ts = timestamp_gen(philo->g->simulation_start);
 	if (print_messages(THINKING, philo->id, philo, ts))
@@ -36,6 +36,7 @@ static int	lock_fork(pthread_mutex_t *first, pthread_mutex_t *second,
 		pthread_mutex_unlock(first);
 		return (1);
 	}
+	usleep(1000);
 	pthread_mutex_lock(second);
 	ts_second = timestamp_gen(philo->g->simulation_start);
 	if (print_messages(TOOK_FORK, philo->id, philo, ts_second))
@@ -66,7 +67,7 @@ int	take_forks(t_philo *philo)
 int	eat(t_philo *philo)
 {
 	long	ts;
-	
+
 	if (take_forks(philo))
 		return (1);
 	ts = timestamp_gen(philo->g->simulation_start);
