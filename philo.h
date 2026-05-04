@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 11:17:01 by marthoma          #+#    #+#             */
-/*   Updated: 2026/05/04 14:33:21 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/05/04 15:00:47 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ typedef struct s_global
 }					t_global;
 
 /*HELPER*/
-int					ft_atoi(const char *nptr);
+long				ft_atoi(const char *nptr);
 long				getcurrenttime(void);
 int					should_stop_simulation(t_global *g);
 long				timestamp_gen(long start);
@@ -112,6 +112,6 @@ void				free_global(t_global *g);
 /*PRINT*/
 void				print_philo(t_philo *philo);
 void				print_global(t_global *g);
-int					print_messages(int code, unsigned int id,
-						t_philo *philo, long ts);
+int					print_messages(int code, unsigned int id, t_philo *philo,
+						long ts);
 #endif

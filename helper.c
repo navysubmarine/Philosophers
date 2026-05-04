@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/23 18:41:13 by marthoma          #+#    #+#             */
-/*   Updated: 2026/05/01 11:19:42 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/05/04 14:50:17 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,11 +55,11 @@ static int	signe(const char *str)
 	return (1);
 }
 
-int	ft_atoi(const char *nptr)
+long	ft_atoi(const char *nptr)
 {
-	int	i;
-	int	reliquat;
-	int	resultat;
+	long	i;
+	long	reliquat;
+	long	resultat;
 
 	i = 0;
 	reliquat = 0;

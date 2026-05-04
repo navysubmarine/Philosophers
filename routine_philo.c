@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/27 14:59:58 by marthoma          #+#    #+#             */
-/*   Updated: 2026/05/04 14:19:18 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/05/04 15:01:02 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ static void	*routine_limited(t_philo *philo)
 			pthread_mutex_lock(&(philo->g->access_philos_done));
 			philo->g->philos_done++;
 			pthread_mutex_unlock(&(philo->g->access_philos_done));
-			//return (NULL);
 		}
 		if (my_sleep(philo))
 			return (NULL);

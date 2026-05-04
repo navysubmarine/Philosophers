@@ -6,7 +6,7 @@
 /*   By: marthoma <marthoma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/21 15:04:19 by marthoma          #+#    #+#             */
-/*   Updated: 2026/04/28 14:26:48 by marthoma         ###   ########.fr       */
+/*   Updated: 2026/05/04 15:00:07 by marthoma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,33 @@ int	is_valid_number(char *arg)
 	return (1);
 }
 
+static int	is_not_int(char **argv)
+{
+	int	i;
+
+	i = 1;
+	while (i < 5)
+	{
+		if (ft_atoi(argv[i]) > 2147483647)
+			return (1);
+		i++;
+	}
+	if (argv[5])
+	{
+		if (ft_atoi(argv[5]) > 2147483647)
+			return (1);
+	}
+	return (0);
+}
+
 static int	check_conditions(char **argv)
 {
+	if (is_not_int(argv))
+	{
+		printf("Error: all arguments must not be bigger than");
+		printf("the size of an integer\n");
+		return (1);
+	}
 	if (ft_atoi(argv[1]) < 1)
 	{
 		printf("Error: there must be at least one philosopher\n");
@@ -63,11 +88,9 @@ int	check_arg(int argc, char **argv)
 		printf("each_philosopher_must_eat]\n");
 		return (1);
 	}
-	if (argv[i][0] == '\0')
-		return (1);
 	while (i < argc)
 	{
-		if (!is_valid_number(argv[i]))
+		if (argv[i][0] == '\0' || !is_valid_number(argv[i]))
 		{
 			printf("Error: arguments must be positive numbers\n");
 			return (1);
