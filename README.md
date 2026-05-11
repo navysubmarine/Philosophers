@@ -1,8 +1,6 @@
-# ⋆˚✰ ݁˖⭑. Philosophers ⋆˚✰ ݁˖⭑.
+*This project has been created as part of the 42 curriculum by **marthoma**.*
 
-> Concurrency, mutexes & dining philosophers — a 42 project
-> 
-> by **marthoma** · [subject PDF](https://cdn.intra.42.fr/pdf/pdf/199862/en.subject.pdf)
+ [subject PDF](https://cdn.intra.42.fr/pdf/pdf/199862/en.subject.pdf)
 
 ---
 
